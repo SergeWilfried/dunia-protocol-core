@@ -13,8 +13,8 @@ const {
   expect,
   time,
   IDO,
-  Fei,
-  Tribe,
+  Cowrie,
+  Dunia,
   MockPair,
   MockRouter,
   getCore
@@ -27,10 +27,10 @@ describe('IDO', function () {
     
     this.core = await getCore(true);
 
-    this.fei = await Fei.at(await this.core.fei());
-    this.tribe = await Tribe.at(await this.core.tribe());
+    this.cowrie = await Cowrie.at(await this.core.cowrie());
+    this.dunia = await Dunia.at(await this.core.dunia());
 
-    this.pair = await MockPair.new(this.fei.address, this.tribe.address);
+    this.pair = await MockPair.new(this.cowrie.address, this.dunia.address);
     this.router = await MockRouter.new(this.pair.address);
 
     this.window = new BN(4 * 365 * 24 * 60 * 60);
@@ -107,9 +107,9 @@ describe('IDO', function () {
     describe('From Genesis Group', function() {
       beforeEach(async function() {
         await this.pair.setReserves('500000', '100000');
-        await this.fei.mint(this.pair.address, '500000', {from: minterAddress});
+        await this.cowrie.mint(this.pair.address, '500000', {from: minterAddress});
 
-        await this.fei.mint(genesisGroup, '50000', {from: minterAddress});
+        await this.cowrie.mint(genesisGroup, '50000', {from: minterAddress});
         await this.core.allocateTribe(this.pair.address, 100000, {from: governorAddress});
       });
 
@@ -120,16 +120,16 @@ describe('IDO', function () {
       });
       describe('Approved', function() {
         beforeEach(async function() {
-          await this.fei.approve(this.ido.address, '50000', {from: genesisGroup});
+          await this.cowrie.approve(this.ido.address, '50000', {from: genesisGroup});
           await this.ido.swapFei('50000', {from: genesisGroup});
         });
 
         it('genesis group balances', async function() {
-          expect(await this.fei.balanceOf(this.ido.address)).to.be.bignumber.equal(new BN(0));
+          expect(await this.cowrie.balanceOf(this.ido.address)).to.be.bignumber.equal(new BN(0));
         });
 
         it('updates pair balances', async function() {
-          expect(await this.fei.balanceOf(this.pair.address)).to.be.bignumber.equal(new BN(500000)); // swap amount is burned
+          expect(await this.cowrie.balanceOf(this.pair.address)).to.be.bignumber.equal(new BN(500000)); // swap amount is burned
         });
       });
     });
@@ -155,14 +155,14 @@ describe('IDO', function () {
       });
 
       it('updates ido balances', async function() {
-        expect(await this.fei.balanceOf(this.ido.address)).to.be.bignumber.equal(new BN(0));
-        expect(await this.tribe.balanceOf(this.ido.address)).to.be.bignumber.equal(new BN(0));
+        expect(await this.cowrie.balanceOf(this.ido.address)).to.be.bignumber.equal(new BN(0));
+        expect(await this.dunia.balanceOf(this.ido.address)).to.be.bignumber.equal(new BN(0));
         expect(await this.pair.balanceOf(this.ido.address)).to.be.bignumber.equal(new BN(10000));
       });
 
       it('updates pair balances', async function() {
-        expect(await this.fei.balanceOf(this.pair.address)).to.be.bignumber.equal(new BN(500000));
-        expect(await this.tribe.balanceOf(this.pair.address)).to.be.bignumber.equal(new BN(100000));
+        expect(await this.cowrie.balanceOf(this.pair.address)).to.be.bignumber.equal(new BN(500000));
+        expect(await this.dunia.balanceOf(this.pair.address)).to.be.bignumber.equal(new BN(100000));
       });
 
       it('updates total token', async function() {

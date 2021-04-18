@@ -13,11 +13,11 @@ contract MockIncentivized is CoreRef {
         address to,
         uint256 amount
     ) public {
-        fei().transfer(to, amount);
+        cowrie().transfer(to, amount);
     }
 
     function approve(address account) public {
-        fei().approve(account, uint(-1));
+        cowrie().approve(account, uint(-1));
     }
 
     function sendFeiFrom(
@@ -25,6 +25,6 @@ contract MockIncentivized is CoreRef {
         address to,
         uint256 amount
     ) public {
-        fei().transferFrom(from, to, amount);
+        cowrie().transferFrom(from, to, amount);
     }
 }

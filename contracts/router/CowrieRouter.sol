@@ -6,11 +6,11 @@ import "@uniswap/v2-core/contracts/interfaces/IUniswapV2Pair.sol";
 import "@uniswap/lib/contracts/libraries/TransferHelper.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../external/UniswapV2Library.sol";
-import "./IFeiRouter.sol";
+import "./ICowrieRouter.sol";
 
-/// @title A Uniswap Router for FEI/ETH swaps
-/// @author Fei Protocol
-contract FeiRouter is IFeiRouter {
+/// @title A Uniswap Router for COWRIE/ETH swaps
+/// @author Cowrie Protocol
+contract CowrieRouter is ICowrieRouter {
     using SafeMathCopy for uint256;
 
     // solhint-disable-next-line var-name-mixedcase
@@ -29,7 +29,7 @@ contract FeiRouter is IFeiRouter {
 
     modifier ensure(uint256 deadline) {
         // solhint-disable-next-line not-rely-on-time
-        require(deadline >= block.timestamp, "FeiRouter: Expired");
+        require(deadline >= block.timestamp, "CowrieRouter: Expired");
         _;
     }
 
@@ -37,10 +37,10 @@ contract FeiRouter is IFeiRouter {
         assert(msg.sender == address(WETH)); // only accept ETH via fallback from the WETH contract
     }
 
-    /// @notice buy FEI for ETH with some protections
+    /// @notice buy COWRIE for ETH with some protections
     /// @param minReward minimum mint reward for purchasing
-    /// @param amountOutMin minimum FEI received
-    /// @param to address to send FEI
+    /// @param amountOutMin minimum COWRIE received
+    /// @param to address to send COWRIE
     /// @param deadline block timestamp after which trade is invalid
     function buyFei(
         uint256 minReward,
@@ -60,7 +60,7 @@ contract FeiRouter is IFeiRouter {
         
         require(
             amountOut >= amountOutMin,
-            "FeiRouter: Insufficient output amount"
+            "CowrieRouter: Insufficient output amount"
         );
         // Convert sent ETH to wrapped ETH and assert successful transfer to pair
         IWETH(WETH).deposit{value: amountIn}();
@@ -75,17 +75,17 @@ contract FeiRouter is IFeiRouter {
             isWETHPairToken0 ? (uint256(0), amountOut) : (amountOut, uint256(0));
         PAIR.swap(amount0Out, amount1Out, to, new bytes(0));
 
-        // Check that FEI recipient got at least minReward on top of trade amount
+        // Check that COWRIE recipient got at least minReward on top of trade amount
         uint256 feiBalanceAfter = IERC20(fei).balanceOf(to);
         uint256 reward = feiBalanceAfter.sub(feiBalanceBefore).sub(amountOut);
-        require(reward >= minReward, "FeiRouter: Not enough reward");
+        require(reward >= minReward, "CowrieRouter: Not enough reward");
 
         return amountOut;
     }
 
-    /// @notice sell FEI for ETH with some protections
+    /// @notice sell COWRIE for ETH with some protections
     /// @param maxPenalty maximum fei burn for purchasing
-    /// @param amountIn amount of FEI to sell
+    /// @param amountIn amount of COWRIE to sell
     /// @param amountOutMin minimum ETH received
     /// @param to address to send ETH
     /// @param deadline block timestamp after which trade is invalid
@@ -103,13 +103,13 @@ contract FeiRouter is IFeiRouter {
 
         IERC20(fei).transferFrom(msg.sender, address(PAIR), amountIn);
 
-        // Figure out how much the PAIR actually received net of FEI burn
+        // Figure out how much the PAIR actually received net of COWRIE burn
         uint256 effectiveAmountIn = IERC20(fei).balanceOf(address(PAIR)).sub(reservesOther);
 
         // Check that burned fee-on-transfer is not more than the maxPenalty
         if (effectiveAmountIn < amountIn) {
             uint256 penalty = amountIn - effectiveAmountIn;
-            require(penalty <= maxPenalty, "FeiRouter: Penalty too high");
+            require(penalty <= maxPenalty, "CowrieRouter: Penalty too high");
         }
 
         amountOut = UniswapV2Library.getAmountOut(
@@ -119,7 +119,7 @@ contract FeiRouter is IFeiRouter {
         );
         require(
             amountOut >= amountOutMin,
-            "FeiRouter: Insufficient output amount"
+            "CowrieRouter: Insufficient output amount"
         );
 
         (uint256 amount0Out, uint256 amount1Out) =

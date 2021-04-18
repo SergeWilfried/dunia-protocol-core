@@ -6,7 +6,7 @@ description: An oracle which references a bonding curve price
 
 ## Contract
 
-[BondingCurveOracle.sol](https://github.com/fei-protocol/fei-protocol-core/blob/master/contracts/oracle/BondingCurveOracle.sol) implements [IBondingCurveOracle](https://github.com/fei-protocol/fei-protocol-core/blob/master/contracts/oracle/IBondingCurveOracle.sol), [CoreRef](https://github.com/fei-protocol/fei-protocol-core/blob/master/contracts/refs/CoreRef.sol), [Timed](https://github.com/fei-protocol/fei-protocol-core/blob/master/contracts/utils/Timed.sol)
+[BondingCurveOracle.sol](https://github.com/cowrie-protocol/cowrie-protocol-core/blob/master/contracts/oracle/BondingCurveOracle.sol) implements [IBondingCurveOracle](https://github.com/cowrie-protocol/cowrie-protocol-core/blob/master/contracts/oracle/IBondingCurveOracle.sol), [CoreRef](https://github.com/cowrie-protocol/cowrie-protocol-core/blob/master/contracts/refs/CoreRef.sol), [Timed](https://github.com/cowrie-protocol/cowrie-protocol-core/blob/master/contracts/utils/Timed.sol)
 
 ## Description
 
@@ -42,10 +42,10 @@ Additionally, the contract includes the "thawing" process. Thawing implements th
 function read() external view returns (Decimal.D256 memory, bool);
 ```
 
-Reads the oracle value and reports the peg as FEI per underlying. The boolean value returned informs whether the reported oracle value is valid. Invalid value means the oracle is uninitialized or the contract is paused.
+Reads the oracle value and reports the peg as COWRIE per underlying. The boolean value returned informs whether the reported oracle value is valid. Invalid value means the oracle is uninitialized or the contract is paused.
 
 {% hint style="info" %}
-This method is [pausable](../../governance/fei-guardian.md). If paused, it won't revert but it will return valid as false
+This method is [pausable](../../governance/cowrie-guardian.md). If paused, it won't revert but it will return valid as false
 {% endhint %}
 
 #### isOutdated
@@ -78,7 +78,7 @@ The referenced [Bonding Curve](../bondingcurve/)
 function initialUSDPrice() external returns (Decimal.D256 memory);
 ```
 
-The initial price to thaw from during the thawing period reported as USD per FEI.
+The initial price to thaw from during the thawing period reported as USD per COWRIE.
 
 {% hint style="info" %}
 This is capped at $1 even if the genesis group pays more than $1 due to the buffer

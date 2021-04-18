@@ -4,8 +4,8 @@ pragma experimental ABIEncoderV2;
 import "./IOracle.sol";
 import "../bondingcurve/IBondingCurve.sol";
 
-/// @title bonding curve oracle interface for Fei Protocol
-/// @author Fei Protocol
+/// @title bonding curve oracle interface for Cowrie Protocol
+/// @author Cowrie Protocol
 interface IBondingCurveOracle is IOracle {
     // ----------- Genesis Group only state changing API -----------
 

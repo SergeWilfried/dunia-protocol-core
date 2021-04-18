@@ -6,7 +6,7 @@ description: A token timelock that releases continuously at the same rate
 
 ## Contract
 
-[LinearTokenTimelock.sol](https://github.com/fei-protocol/fei-protocol-core/blob/master/contracts/utils/LinearTokenTimelock.sol) implements [Timed](https://github.com/fei-protocol/fei-protocol-core/blob/master/contracts/utils/Timed.sol)
+[LinearTokenTimelock.sol](https://github.com/cowrie-protocol/cowrie-protocol-core/blob/master/contracts/utils/LinearTokenTimelock.sol) implements [Timed](https://github.com/cowrie-protocol/cowrie-protocol-core/blob/master/contracts/utils/Timed.sol)
 
 ## Description
 
@@ -14,7 +14,7 @@ A timelock for releasing tokens over a continuous linear schedule. There is an a
 
 ### Release Calculation
 
-Uses [Timed](https://github.com/fei-protocol/fei-protocol-core/wiki/Timed) to have a fixed period _d_ of release. The elapsed time _t_ is on the range \[0,d\].
+Uses [Timed](https://github.com/cowrie-protocol/cowrie-protocol-core/wiki/Timed) to have a fixed period _d_ of release. The elapsed time _t_ is on the range \[0,d\].
 
 The contract maintains the following:
 

@@ -1,19 +1,19 @@
 ---
-description: 'The access control, source of truth, and DAO treasury for Fei Protocol'
+description: 'The access control, source of truth, and DAO treasury for Cowrie Protocol'
 ---
 
 # Core
 
 ## Contract
 
-[Core.sol](https://github.com/fei-protocol/fei-protocol-core/blob/master/contracts/core/Core.sol) implements [ICore](https://github.com/fei-protocol/fei-protocol-core/blob/master/contracts/core/ICore.sol), [Permissions](https://github.com/fei-protocol/fei-protocol-core/blob/master/contracts/core/Permissions.sol)
+[Core.sol](https://github.com/cowrie-protocol/cowrie-protocol-core/blob/master/contracts/core/Core.sol) implements [ICore](https://github.com/cowrie-protocol/cowrie-protocol-core/blob/master/contracts/core/ICore.sol), [Permissions](https://github.com/cowrie-protocol/cowrie-protocol-core/blob/master/contracts/core/Permissions.sol)
 
 ## Description
 
 The Core contract responsibilities:
 
 * Access control
-* Pointing to [FEI](../fei-stablecoin/), [TRIBE](../../governance/tribe.md), and [GenesisGroup](../genesis/genesisgroup.md) contracts
+* Pointing to [COWRIE](../cowrie-stablecoin/), [TRIBE](../../governance/dunia.md), and [GenesisGroup](../genesis/genesisgroup.md) contracts
 * Stores whether GenesisGroup has completed
 * Escrowing DAO TRIBE treasury
 
@@ -21,12 +21,12 @@ The access control module is managed by Permissions.
 
 {% page-ref page="permissions.md" %}
 
-Most other Fei Protocol contracts should refer to Core by implementing the [CoreRef](../references/coreref.md) contract.
+Most other Cowrie Protocol contracts should refer to Core by implementing the [CoreRef](../references/coreref.md) contract.
 
 When Core is constructed and initialized it does the following:
 
 * Set sender as governor
-* Create and reference FEI and TRIBE contracts
+* Create and reference COWRIE and TRIBE contracts
 
 The governor will then set the genesis group contract.
 
@@ -40,11 +40,11 @@ When the genesis group conditions are met, the GenesisGroup contract should comp
 
 {% tabs %}
 {% tab title="FeiUpdate" %}
-Governance change of FEI token address
+Governance change of COWRIE token address
 
 | type | param | description |
 | :--- | :--- | :--- |
-| address indexed |  \_fei | new FEI address |
+| address indexed |  \_cowrie | new COWRIE address |
 {% endtab %}
 
 {% tab title="TribeUpdate" %}
@@ -52,7 +52,7 @@ Governance change of TRIBE token address
 
 | type | param | description |
 | :--- | :--- | :--- |
-| address indexed |  \_tribe | new TRIBE address |
+| address indexed |  \_dunia | new TRIBE address |
 {% endtab %}
 
 {% tab title="GenesisGroupUpdate" %}
@@ -73,7 +73,7 @@ Governance deployment of TRIBE tokens from treasury
 {% endtab %}
 
 {% tab title="GenesisPeriodComplete" %}
-Signals completion of Genesis Period and full launch of FEI protocol
+Signals completion of Genesis Period and full launch of COWRIE protocol
 
 | type | param | description |
 | :--- | :--- | :--- |
@@ -83,21 +83,21 @@ Signals completion of Genesis Period and full launch of FEI protocol
 
 ## Read-Only Functions
 
-### fei
+### cowrie
 
 ```javascript
-function fei() external view returns (IFei);
+function cowrie() external view returns (ICowrie);
 ```
 
-returns the address of the [FEI](../fei-stablecoin/fei-fei-usd.md) contract as an interface for consumption
+returns the address of the [COWRIE](../cowrie-stablecoin/cowrie-cowrie-usd.md) contract as an interface for consumption
 
-### tribe
+### dunia
 
 ```javascript
-function tribe() external view returns (IERC20);
+function dunia() external view returns (IERC20);
 ```
 
-returns the address of the [TRIBE](../../governance/tribe.md) contract as an interface for consumption
+returns the address of the [TRIBE](../../governance/dunia.md) contract as an interface for consumption
 
 ### genesisGroup
 
@@ -123,7 +123,7 @@ returns true if after genesis period and launched, false otherwise
 function setFei(address token) external;
 ```
 
-sets the reference [FEI](../fei-stablecoin/fei-fei-usd.md) contract
+sets the reference [COWRIE](../cowrie-stablecoin/cowrie-cowrie-usd.md) contract
 
 emits `FeiUpdate`
 
@@ -133,7 +133,7 @@ emits `FeiUpdate`
 function setTribe(address token) external;
 ```
 
-sets the reference [TRIBE](../../governance/tribe.md) contract
+sets the reference [TRIBE](../../governance/dunia.md) contract
 
 emits `TribeUpdate`
 
@@ -153,7 +153,7 @@ emits `GenesisGroupUpdate`
 function allocateTribe(address to, uint256 amount) external;
 ```
 
-distribute `amount` [TRIBE](../../governance/tribe.md) from Core to an external address `to`
+distribute `amount` [TRIBE](../../governance/dunia.md) from Core to an external address `to`
 
 emits `TribeAllocation`
 
@@ -165,7 +165,7 @@ emits `TribeAllocation`
 function completeGenesisGroup() external;
 ```
 
-called during Fei Protocol launch to unlock the remaining protocol functionality
+called during Cowrie Protocol launch to unlock the remaining protocol functionality
 
 emits `GenesisPeriodComplete`
 

@@ -8,9 +8,9 @@ import "./OracleRef.sol";
 import "./IUniRef.sol";
 
 /// @title A Reference to Uniswap
-/// @author Fei Protocol
+/// @author Cowrie Protocol
 /// @notice defines some modifiers and utilities around interacting with Uniswap
-/// @dev the uniswap pair should be FEI and another asset
+/// @dev the uniswap pair should be COWRIE and another asset
 abstract contract UniRef is IUniRef, OracleRef {
     using Decimal for Decimal.D256;
     using Babylonian for uint256;
@@ -26,7 +26,7 @@ abstract contract UniRef is IUniRef, OracleRef {
     IUniswapV2Pair public override pair;
 
     /// @notice UniRef constructor
-    /// @param _core Fei Core to reference
+    /// @param _core Cowrie Core to reference
     /// @param _pair Uniswap pair to reference
     /// @param _router Uniswap Router to reference
     /// @param _oracle oracle to reference
@@ -40,7 +40,7 @@ abstract contract UniRef is IUniRef, OracleRef {
 
         router = IUniswapV2Router02(_router);
 
-        _approveToken(address(fei()));
+        _approveToken(address(cowrie()));
         _approveToken(token());
         _approveToken(_pair);
     }
@@ -55,17 +55,17 @@ abstract contract UniRef is IUniRef, OracleRef {
         _approveToken(_pair);
     }
 
-    /// @notice the address of the non-fei underlying token
+    /// @notice the address of the non-cowrie underlying token
     function token() public view override returns (address) {
         address token0 = pair.token0();
-        if (address(fei()) == token0) {
+        if (address(cowrie()) == token0) {
             return pair.token1();
         }
         return token0;
     }
 
-    /// @notice pair reserves with fei listed first
-    /// @dev uses the max of pair fei balance and fei reserves. Mitigates attack vectors which manipulate the pair balance
+    /// @notice pair reserves with cowrie listed first
+    /// @dev uses the max of pair cowrie balance and cowrie reserves. Mitigates attack vectors which manipulate the pair balance
     function getReserves()
         public
         view
@@ -74,7 +74,7 @@ abstract contract UniRef is IUniRef, OracleRef {
     {
         address token0 = pair.token0();
         (uint256 reserve0, uint256 reserve1, ) = pair.getReserves();
-        (feiReserves, tokenReserves) = address(fei()) == token0
+        (feiReserves, tokenReserves) = address(cowrie()) == token0
             ? (reserve0, reserve1)
             : (reserve1, reserve0);
         return (feiReserves, tokenReserves);
@@ -103,7 +103,7 @@ abstract contract UniRef is IUniRef, OracleRef {
     }
 
     /// @notice returns true if price is below the peg
-    /// @dev counterintuitively checks if peg < price because price is reported as FEI per X
+    /// @dev counterintuitively checks if peg < price because price is reported as COWRIE per X
     function _isBelowPeg(Decimal.D256 memory peg) internal view returns (bool) {
         (Decimal.D256 memory price, , ) = _getUniswapPrice();
         return peg.lessThan(price);
@@ -141,7 +141,7 @@ abstract contract UniRef is IUniRef, OracleRef {
         return (reserveTarget - root).mul(1000).div(997);
     }
 
-    /// @notice calculate amount of Fei needed to trade back to the peg
+    /// @notice calculate amount of Cowrie needed to trade back to the peg
     function _getAmountToPegFei(
         uint256 feiReserves,
         uint256 tokenReserves,
@@ -150,7 +150,7 @@ abstract contract UniRef is IUniRef, OracleRef {
         return _getAmountToPeg(feiReserves, tokenReserves, peg);
     }
 
-    /// @notice calculate amount of the not Fei token needed to trade back to the peg
+    /// @notice calculate amount of the not Cowrie token needed to trade back to the peg
     function _getAmountToPegOther(
         uint256 feiReserves,
         uint256 tokenReserves,
@@ -160,9 +160,9 @@ abstract contract UniRef is IUniRef, OracleRef {
     }
 
     /// @notice get uniswap price and reserves
-    /// @return price reported as Fei per X
-    /// @return reserveFei fei reserves
-    /// @return reserveOther non-fei reserves
+    /// @return price reported as Cowrie per X
+    /// @return reserveFei cowrie reserves
+    /// @return reserveOther non-cowrie reserves
     function _getUniswapPrice()
         internal
         view
@@ -180,10 +180,10 @@ abstract contract UniRef is IUniRef, OracleRef {
         );
     }
 
-    /// @notice get final uniswap price after hypothetical FEI trade
-    /// @param amountFei a signed integer representing FEI trade. Positive=sell, negative=buy
-    /// @param reserveFei fei reserves
-    /// @param reserveOther non-fei reserves
+    /// @notice get final uniswap price after hypothetical COWRIE trade
+    /// @param amountFei a signed integer representing COWRIE trade. Positive=sell, negative=buy
+    /// @param reserveFei cowrie reserves
+    /// @param reserveOther non-cowrie reserves
     function _getFinalPrice(
         int256 amountFei,
         uint256 reserveFei,
@@ -199,7 +199,7 @@ abstract contract UniRef is IUniRef, OracleRef {
     }
 
     /// @notice return the percent distance from peg before and after a hypothetical trade
-    /// @param amountIn a signed amount of FEI to be traded. Positive=sell, negative=buy
+    /// @param amountIn a signed amount of COWRIE to be traded. Positive=sell, negative=buy
     /// @return initialDeviation the percent distance from peg before trade
     /// @return finalDeviation the percent distance from peg after hypothetical trade
     /// @dev deviations will return Decimal.zero() if above peg
@@ -250,7 +250,7 @@ abstract contract UniRef is IUniRef, OracleRef {
         Decimal.D256 memory price,
         Decimal.D256 memory peg
     ) internal pure returns (Decimal.D256 memory) {
-        // If price <= peg, then FEI is more expensive and above peg
+        // If price <= peg, then COWRIE is more expensive and above peg
         // In this case we can just return zero for deviation
         if (price.lessThanOrEqualTo(peg)) {
             return Decimal.zero();

@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../external/Decimal.sol";
 
 /// @title UniRef interface
-/// @author Fei Protocol
+/// @author Cowrie Protocol
 interface IUniRef {
     // ----------- Events -----------
 

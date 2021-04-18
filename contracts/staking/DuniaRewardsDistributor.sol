@@ -9,9 +9,9 @@ import { Math } from  "@openzeppelin/contracts/math/Math.sol";
 import { SafeMath } from  "@openzeppelin/contracts/math/SafeMath.sol";
 
 /// @title Distributor for TRIBE rewards to the staking contract
-/// @author Fei Protocol
+/// @author Cowrie Protocol
 /// @notice distributes TRIBE over time at a linearly decreasing rate
-contract FeiRewardsDistributor is IRewardsDistributor, CoreRef, Timed {
+contract DuniaRewardsDistributor is IRewardsDistributor, CoreRef, Timed {
     using SafeMath for uint256;
     using Decimal for Decimal.D256;
 
@@ -35,7 +35,7 @@ contract FeiRewardsDistributor is IRewardsDistributor, CoreRef, Timed {
         CoreRef(_core) 
         Timed(_duration)
     {
-        require(_duration >= _frequency, "FeiRewardsDistributor: frequency exceeds duration");
+        require(_duration >= _frequency, "DuniaRewardsDistributor: frequency exceeds duration");
         stakingContract = IStakingRewards(_stakingContract);
         dripFrequency = _frequency;
         incentiveAmount = _incentiveAmount;
@@ -49,15 +49,15 @@ contract FeiRewardsDistributor is IRewardsDistributor, CoreRef, Timed {
     /// @notice sends the unlocked amount of TRIBE to the stakingRewards contract
     /// @return amount of TRIBE sent
     function drip() public override postGenesis whenNotPaused nonContract returns(uint256) {
-        require(isDripAvailable(), "FeiRewardsDistributor: Not passed drip frequency");
+        require(isDripAvailable(), "DuniaRewardsDistributor: Not passed drip frequency");
         // solhint-disable-next-line not-rely-on-time
         lastDistributionTime = block.timestamp;
 
         uint amount = releasedReward();
-        require(amount != 0, "FeiRewardsDistributor: no rewards");
+        require(amount != 0, "DuniaRewardsDistributor: no rewards");
         distributedRewards = distributedRewards.add(amount);
 
-        tribe().transfer(address(stakingContract), amount);
+        dunia().transfer(address(stakingContract), amount);
         stakingContract.notifyRewardAmount(amount);
 
         _incentivize();
@@ -69,7 +69,7 @@ contract FeiRewardsDistributor is IRewardsDistributor, CoreRef, Timed {
     /// @notice sends tokens back to governance treasury. Only callable by governance
     /// @param amount the amount of tokens to send back to treasury
     function governorWithdrawTribe(uint256 amount) external override onlyGovernor {
-        tribe().transfer(address(core()), amount);
+        dunia().transfer(address(core()), amount);
         emit TribeWithdraw(amount);
     }
 
@@ -163,6 +163,6 @@ contract FeiRewardsDistributor is IRewardsDistributor, CoreRef, Timed {
     }
 
     function _incentivize() internal ifMinterSelf {
-        fei().mint(msg.sender, incentiveAmount);
+        cowrie().mint(msg.sender, incentiveAmount);
     }
 }

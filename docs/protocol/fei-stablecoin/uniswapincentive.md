@@ -1,20 +1,20 @@
 ---
-description: The Direct Incentives contract for FEI/ETH liquidity
+description: The Direct Incentives contract for COWRIE/ETH liquidity
 ---
 
 # UniswapIncentive
 
 ## Contract
 
-[UniswapIncentive.sol](https://github.com/fei-protocol/fei-protocol-core/blob/master/contracts/token/UniswapIncentive.sol) implements [IUniswapIncentive](https://github.com/fei-protocol/fei-protocol-core/blob/master/contracts/token/IUniswapIncentive.sol), [UniRef](https://github.com/fei-protocol/fei-protocol-core/blob/master/contracts/refs/UniRef.sol)
+[UniswapIncentive.sol](https://github.com/cowrie-protocol/cowrie-protocol-core/blob/master/contracts/token/UniswapIncentive.sol) implements [IUniswapIncentive](https://github.com/cowrie-protocol/cowrie-protocol-core/blob/master/contracts/token/IUniswapIncentive.sol), [UniRef](https://github.com/cowrie-protocol/cowrie-protocol-core/blob/master/contracts/refs/UniRef.sol)
 
 ## Description
 
 {% hint style="info" %}
-Because this contract can be swapped for a new UniswapIncentive, for integrations we recommend calling`incentiveContract(0x94B0A3d511b6EcDb17eBF877278Ab030acb0A878)`on the FEI token to always read the currently applied UniswapIncentive on the ETH-FEI pair
+Because this contract can be swapped for a new UniswapIncentive, for integrations we recommend calling`incentiveContract(0x94B0A3d511b6EcDb17eBF877278Ab030acb0A878)`on the COWRIE token to always read the currently applied UniswapIncentive on the ETH-COWRIE pair
 {% endhint %}
 
-The FEI incentive contract applied on transfers involving a Uniswap pair.
+The COWRIE incentive contract applied on transfers involving a Uniswap pair.
 
 The UniswapIncentive contract assumes that all transfers involving Uniswap are either a sell or a buy. In either case, the hypothetical start and end price are calculated then compared to the peg to capture the magnitude distance _m_. See UniRef for more details on how these formulas are derived.
 
@@ -23,20 +23,20 @@ The UniswapIncentive contract assumes that all transfers involving Uniswap are e
 These parameters are fed into the incentive function to produce a mint \(in the case of buy\) or burn \(in the case of sell\) action. Any address can be exempted from incentives by governance.
 
 {% hint style="info" %}
-The below incentives only apply to the FEI portion of the trade that would be below the peg. When calculating "x", the contract uses the "distance from peg FEI" method in [UniRef](../references/uniref.md).
+The below incentives only apply to the COWRIE portion of the trade that would be below the peg. When calculating "x", the contract uses the "distance from peg COWRIE" method in [UniRef](../references/uniref.md).
 {% endhint %}
 
 ### Sell \(Burn\)
 
-All FEI transfers going TO the uniswap pool are treated as a sell. This has the counterintuitive effect of treating liquidity provision as a sell.
+All COWRIE transfers going TO the uniswap pool are treated as a sell. This has the counterintuitive effect of treating liquidity provision as a sell.
 
 The implementation integrates the burn function from the [white paper](../../whitepaper.md) with respect to the distance from the peg. This creates a nice path independent property where a trader is no better off doing one large trade or many small trades, ignoring fees. The burn formula for sell amount _x_ is: 
 
-![Burn formula for selling FEI](../../.gitbook/assets/screen-shot-2021-02-23-at-8.10.49-am.png)
+![Burn formula for selling COWRIE](../../.gitbook/assets/screen-shot-2021-02-23-at-8.10.49-am.png)
 
 The burn is only applied to trades below the peg when the incentive contract is appointed as a Burner🔥.
 
-The burn is taken from the in-flight trade amount. If the burn is 5% on a 100 FEI transfer then the recipient gets 95 FEI. 
+The burn is taken from the in-flight trade amount. If the burn is 5% on a 100 COWRIE transfer then the recipient gets 95 COWRIE. 
 
 {% hint style="info" %}
 The entire trade size including the burn is used to calculate the slippage for the end deviation from the peg. This could lead to a higher than expected burn for large trades when below peg.
@@ -52,7 +52,7 @@ All transfers going FROM the uniswap pool are treated as a buy. This has the cou
 
 The initial magnitude _m_ deviation from the peg before the hypothetical trade is used to maximize the potential mint amount. _w_ is the time weight we discuss in the next section. The mint formula for buy amount _x_ is: 
 
-![Incentive formula for buying FEI](../../.gitbook/assets/screen-shot-2021-02-23-at-8.21.09-am.png)
+![Incentive formula for buying COWRIE](../../.gitbook/assets/screen-shot-2021-02-23-at-8.21.09-am.png)
 
 The incentive formula is normally just the right-hand side of the above min function. It is linear in the time weight `w(t)` and the distance from the peg `m`
 
@@ -62,7 +62,7 @@ The mint should only apply if the trade starts below the peg and if the incentiv
 
 ### Incentivized Amount
 
-The incentivized amount on Uniswap FEI-ETH trades is only calculated based on the amount that pushes FEI below the peg for a sell or up to the peg for a buy. For example say a trade starts 1% below the peg and ends 1% above, only approximately half of the trade will get the bonus.
+The incentivized amount on Uniswap COWRIE-ETH trades is only calculated based on the amount that pushes COWRIE below the peg for a sell or up to the peg for a buy. For example say a trade starts 1% below the peg and ends 1% above, only approximately half of the trade will get the bonus.
 
 ### Time Weight
 
@@ -83,7 +83,7 @@ Incentive parity is defined as a boolean expression, which is true when the mint
 
 ![Condition for Incentive Parity](../../.gitbook/assets/screen-shot-2021-02-14-at-1.13.12-pm%20%281%29.png)
 
-Parity is used as a trigger condition for reweights in the [UniswapPCVController](https://github.com/fei-protocol/fei-protocol-core/wiki/UniswapPCVController)
+Parity is used as a trigger condition for reweights in the [UniswapPCVController](https://github.com/cowrie-protocol/cowrie-protocol-core/wiki/UniswapPCVController)
 
 ## [Access Control](../access-control/) 
 
@@ -193,7 +193,7 @@ function getBuyIncentive(uint256 amount)
     );
 ```
 
-returns the buy incentive amount `incentive`for a FEI transfer of `amount`out of the FEI/ETH incentivized Uniswap pool. Also returns the updated time weight `weight` and the `initialDeviation` and `finalDeviation` which are equal to _m_ start and end, respectively.
+returns the buy incentive amount `incentive`for a COWRIE transfer of `amount`out of the COWRIE/ETH incentivized Uniswap pool. Also returns the updated time weight `weight` and the `initialDeviation` and `finalDeviation` which are equal to _m_ start and end, respectively.
 
 ### getSellPenalty
 
@@ -208,7 +208,7 @@ function getSellPenalty(uint256 amount)
     );
 ```
 
-returns the sell penalty amount `penalty` a FEI transfer of `amount` into the FEI/ETH incentivized Uniswap pool. Also returns the `initialDeviation` and `finalDeviation` which are equal to _m_ start and end, respectively.
+returns the sell penalty amount `penalty` a COWRIE transfer of `amount` into the COWRIE/ETH incentivized Uniswap pool. Also returns the `initialDeviation` and `finalDeviation` which are equal to _m_ start and end, respectively.
 
 ### getSellPenaltyMultiplier
 
@@ -262,7 +262,7 @@ set the current time weight to `weight`, growing at a rate `growth` and active f
 
 emits `TimeWeightUpdate` and `GrowthRateUpdate` if the growth rate changes
 
-## Fei-Only🌲
+## Cowrie-Only🌲
 
 ### incentivize
 
@@ -282,14 +282,14 @@ applies the buy reward based on `amountIn` if:
 * below peg
 * time weight non-zero
 * contract is a Minter💰
-* `sender` is the ETH/FEI incentivized pair
+* `sender` is the ETH/COWRIE incentivized pair
 * `receiver` is not exempt
 
 applies the sell penalty based on `amountIn` if:
 
 * trade ends below peg
 * contract is a Burner🔥
-* `receiver` is the ETH/FEI incentivized pair
+* `receiver` is the ETH/COWRIE incentivized pair
 * `sender` is not exempt
 
 ## ABIs

@@ -1,10 +1,10 @@
 ---
-description: Fei Protocol's Core access control module
+description: Cowrie Protocol's Core access control module
 ---
 
 # Access Control
 
-Fei Protocol uses access control to define the system's contracts responsibilities.
+Cowrie Protocol uses access control to define the system's contracts responsibilities.
 
 System Roles:
 
@@ -14,7 +14,7 @@ System Roles:
 * PCV Controller ⚙️
 * Guardian 🛡️
 
-The Fei Core contract manages access control.
+The Cowrie Core contract manages access control.
 
 {% page-ref page="core.md" %}
 
@@ -22,17 +22,17 @@ The Fei Core contract manages access control.
 
 ### Governor ⚖️
 
-The Governor role is the most powerful role in Fei Protocol. It grants and revokes all other roles in the platform. It manages a multitude of protocol parameters unique to each contract \(bonding curve targets, incentive formulas, oracle windows, and more\).
+The Governor role is the most powerful role in Cowrie Protocol. It grants and revokes all other roles in the platform. It manages a multitude of protocol parameters unique to each contract \(bonding curve targets, incentive formulas, oracle windows, and more\).
 
-Implementing Governor as a role and not a single contract grants Fei Protocol flexibility to appoint automated governance contracts or different tiers of governance with varying degrees of difficulty for execution criteria.
+Implementing Governor as a role and not a single contract grants Cowrie Protocol flexibility to appoint automated governance contracts or different tiers of governance with varying degrees of difficulty for execution criteria.
 
-While the role technically belongs to the Timelock, it is valuable to think of the [Fei DAO](../../governance/fei-dao.md) as the only Governor at launch, since the Fei DAO is the admin of the Timelock.
+While the role technically belongs to the Timelock, it is valuable to think of the [Cowrie DAO](../../governance/cowrie-dao.md) as the only Governor at launch, since the Cowrie DAO is the admin of the Timelock.
 
-{% page-ref page="../../governance/fei-dao.md" %}
+{% page-ref page="../../governance/cowrie-dao.md" %}
 
 ### Minter 💰 
 
-Minters create \(mint\) [Fei USD](../fei-stablecoin/fei-fei-usd.md) and add it to any address. Minting can be a reward for the actions of supporting the peg, or an issuance mechanism for funding PCV on a bonding curve.
+Minters create \(mint\) [Cowrie USD](../cowrie-stablecoin/cowrie-cowrie-usd.md) and add it to any address. Minting can be a reward for the actions of supporting the peg, or an issuance mechanism for funding PCV on a bonding curve.
 
 Minter Examples:
 
@@ -42,11 +42,11 @@ Minter Examples:
 
 ### Burner 🔥
 
-Burners remove \(burn\) portions of [Fei USD](../fei-stablecoin/fei-fei-usd.md) from any address. Burning occurs as a disincentive for the actions of hurting the peg.
+Burners remove \(burn\) portions of [Cowrie USD](../cowrie-stablecoin/cowrie-cowrie-usd.md) from any address. Burning occurs as a disincentive for the actions of hurting the peg.
 
 Burner Example:
 
-{% page-ref page="../fei-stablecoin/uniswapincentive.md" %}
+{% page-ref page="../cowrie-stablecoin/uniswapincentive.md" %}
 
 ### PCV Controller ⚙️
 
@@ -58,9 +58,9 @@ PCV Controller Example:
 
 ### Guardian 🛡️
 
-The Guardian enables quick feature shutdowns during unforeseen events. It can revoke any role from the above described role types. It can also shut off additional protocol functionality, and force reweights. It cannot manage PCV or mint FEI.
+The Guardian enables quick feature shutdowns during unforeseen events. It can revoke any role from the above described role types. It can also shut off additional protocol functionality, and force reweights. It cannot manage PCV or mint COWRIE.
 
-{% page-ref page="../../governance/fei-guardian.md" %}
+{% page-ref page="../../governance/cowrie-guardian.md" %}
 
 
 

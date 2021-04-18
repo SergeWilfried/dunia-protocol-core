@@ -1,18 +1,18 @@
 ---
-description: The access control module of Fei Protocol Core
+description: The access control module of Cowrie Protocol Core
 ---
 
 # Permissions
 
 ## Contract
 
-[Permissions.sol](https://github.com/fei-protocol/fei-protocol-core/blob/master/contracts/core/Permissions.sol) implements [IPermissions](https://github.com/fei-protocol/fei-protocol-core/blob/master/contracts/core/IPermissions.sol), [AccessControl](https://docs.openzeppelin.com/contracts/3.x/api/access#AccessControl)
+[Permissions.sol](https://github.com/cowrie-protocol/cowrie-protocol-core/blob/master/contracts/core/Permissions.sol) implements [IPermissions](https://github.com/cowrie-protocol/cowrie-protocol-core/blob/master/contracts/core/IPermissions.sol), [AccessControl](https://docs.openzeppelin.com/contracts/3.x/api/access#AccessControl)
 
 ## Description
 
 The [access control](./) module of the [Core](core.md) contract. It maintains which roles exist, role admins, and which addresses have which roles.
 
-The contract expands the OpenZeppelin Access Control contract with additional Fei Protocol-specific roles and functionality.
+The contract expands the OpenZeppelin Access Control contract with additional Cowrie Protocol-specific roles and functionality.
 
 {% embed url="https://docs.openzeppelin.com/contracts/3.x/api/access\#AccessControl" %}
 

@@ -7,10 +7,10 @@ import "../utils/LinearTokenTimelock.sol";
 import "../refs/UniRef.sol";
 
 /// @title an initial DeFi offering for the TRIBE token
-/// @author Fei Protocol
+/// @author Cowrie Protocol
 contract IDO is IDOInterface, UniRef, LinearTokenTimelock {
     /// @notice IDO constructor
-    /// @param _core Fei Core address to reference
+    /// @param _core Cowrie Core address to reference
     /// @param _beneficiary the beneficiary to vest LP shares
     /// @param _duration the duration of LP share vesting
     /// @param _pair the Uniswap pair contract of the IDO
@@ -28,8 +28,8 @@ contract IDO is IDOInterface, UniRef, LinearTokenTimelock {
     {}
 
     /// @notice deploys all held TRIBE on Uniswap at the given ratio
-    /// @param feiRatio the exchange rate for FEI/TRIBE
-    /// @dev the contract will mint any FEI necessary to do the listing. Assumes no existing LP
+    /// @param feiRatio the exchange rate for COWRIE/TRIBE
+    /// @dev the contract will mint any COWRIE necessary to do the listing. Assumes no existing LP
     function deploy(Decimal.D256 calldata feiRatio)
         external
         override
@@ -37,15 +37,15 @@ contract IDO is IDOInterface, UniRef, LinearTokenTimelock {
     {
         uint256 tribeAmount = tribeBalance();
 
-        // calculate and mint amount of FEI for IDO
+        // calculate and mint amount of COWRIE for IDO
         uint256 feiAmount = feiRatio.mul(tribeAmount).asUint256();
         _mintFei(feiAmount);
 
         // deposit liquidity
         uint256 endOfTime = uint256(-1);
         router.addLiquidity(
-            address(tribe()),
-            address(fei()),
+            address(dunia()),
+            address(cowrie()),
             tribeAmount,
             feiAmount,
             tribeAmount,
@@ -57,8 +57,8 @@ contract IDO is IDOInterface, UniRef, LinearTokenTimelock {
         emit Deploy(feiAmount, tribeAmount);
     }
 
-    /// @notice swaps Genesis Group FEI on Uniswap For TRIBE
-    /// @param amountFei the amount of FEI to swap
+    /// @notice swaps Genesis Group COWRIE on Uniswap For TRIBE
+    /// @param amountFei the amount of COWRIE to swap
     /// @return uint amount of TRIBE sent to Genesis Group
     function swapFei(uint256 amountFei)
         external
@@ -75,15 +75,15 @@ contract IDO is IDOInterface, UniRef, LinearTokenTimelock {
                 tribeReserves
             );
 
-        fei().transferFrom(msg.sender, address(pair), amountFei);
+        cowrie().transferFrom(msg.sender, address(pair), amountFei);
 
         (uint256 amount0Out, uint256 amount1Out) =
-            pair.token0() == address(fei())
+            pair.token0() == address(cowrie())
                 ? (uint256(0), amountOut)
                 : (amountOut, uint256(0));
         pair.swap(amount0Out, amount1Out, msg.sender, new bytes(0));
 
-        fei().burnFrom(address(pair), amountFei);
+        cowrie().burnFrom(address(pair), amountFei);
         pair.sync();
         
         return amountOut;

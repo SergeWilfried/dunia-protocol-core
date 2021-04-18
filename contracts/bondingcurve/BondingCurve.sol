@@ -8,8 +8,8 @@ import "../refs/OracleRef.sol";
 import "../pcv/PCVSplitter.sol";
 import "../utils/Timed.sol";
 
-/// @title an abstract bonding curve for purchasing FEI
-/// @author Fei Protocol
+/// @title an abstract bonding curve for purchasing COWRIE
+/// @author Cowrie Protocol
 abstract contract BondingCurve is IBondingCurve, OracleRef, PCVSplitter, Timed {
     using Decimal for Decimal.D256;
     using Roots for uint256;
@@ -17,19 +17,19 @@ abstract contract BondingCurve is IBondingCurve, OracleRef, PCVSplitter, Timed {
     /// @notice the Scale target at which bonding curve price fixes
     uint256 public override scale;
 
-    /// @notice the total amount of FEI purchased on bonding curve. FEI_b from the whitepaper
+    /// @notice the total amount of COWRIE purchased on bonding curve. FEI_b from the whitepaper
     uint256 public override totalPurchased; // FEI_b for this curve
 
     /// @notice the buffer applied on top of the peg purchase price once at Scale
     uint256 public override buffer = 100;
     uint256 public constant BUFFER_GRANULARITY = 10_000;
 
-    /// @notice amount of FEI paid for allocation when incentivized
+    /// @notice amount of COWRIE paid for allocation when incentivized
     uint256 public override incentiveAmount;
 
     /// @notice constructor
     /// @param _scale the Scale target where peg fixes
-    /// @param _core Fei Core to reference
+    /// @param _core Cowrie Core to reference
     /// @param _pcvDeposits the PCV Deposits for the PCVSplitter
     /// @param _ratios the ratios for the PCVSplitter
     /// @param _oracle the UniswapOracle to reference
@@ -107,7 +107,7 @@ abstract contract BondingCurve is IBondingCurve, OracleRef, PCVSplitter, Timed {
     }
 
     /// @notice return current instantaneous bonding curve price
-    /// @return price reported as FEI per X with X being the underlying asset
+    /// @return price reported as COWRIE per X with X being the underlying asset
     /// @dev Can be innacurate if outdated, need to call `oracle().isOutdated()` to check
     function getCurrentPrice()
         public
@@ -121,9 +121,9 @@ abstract contract BondingCurve is IBondingCurve, OracleRef, PCVSplitter, Timed {
         return peg().div(_getBondingCurvePriceMultiplier());
     }
 
-    /// @notice return amount of FEI received after a bonding curve purchase
+    /// @notice return amount of COWRIE received after a bonding curve purchase
     /// @param amountIn the amount of underlying used to purchase
-    /// @return amountOut the amount of FEI received
+    /// @return amountOut the amount of COWRIE received
     /// @dev Can be innacurate if outdated, need to call `oracle().isOutdated()` to check
     function getAmountOut(uint256 amountIn)
         public
@@ -141,7 +141,7 @@ abstract contract BondingCurve is IBondingCurve, OracleRef, PCVSplitter, Timed {
 
     /// @notice return the average price of a transaction along bonding curve
     /// @param amountIn the amount of underlying used to purchase
-    /// @return price reported as USD per FEI
+    /// @return price reported as USD per COWRIE
     /// @dev Can be innacurate if outdated, need to call `oracle().isOutdated()` to check
     function getAverageUSDPrice(uint256 amountIn)
         public
@@ -157,7 +157,7 @@ abstract contract BondingCurve is IBondingCurve, OracleRef, PCVSplitter, Timed {
     /// @notice the amount of PCV held in contract and ready to be allocated
     function getTotalPCVHeld() public view virtual override returns (uint256);
 
-    /// @notice multiplies amount in by the peg to convert to FEI
+    /// @notice multiplies amount in by the peg to convert to COWRIE
     function _getAdjustedAmount(uint256 amountIn)
         internal
         view
@@ -166,7 +166,7 @@ abstract contract BondingCurve is IBondingCurve, OracleRef, PCVSplitter, Timed {
         return peg().mul(amountIn).asUint256();
     }
 
-    /// @notice mint FEI and send to buyer destination
+    /// @notice mint COWRIE and send to buyer destination
     function _purchase(uint256 amountIn, address to)
         internal
         returns (uint256 amountOut)
@@ -175,7 +175,7 @@ abstract contract BondingCurve is IBondingCurve, OracleRef, PCVSplitter, Timed {
 
         amountOut = getAmountOut(amountIn);
         _incrementTotalPurchased(amountOut);
-        fei().mint(to, amountOut);
+        cowrie().mint(to, amountOut);
 
         emit Purchase(to, amountIn, amountOut);
 
@@ -195,7 +195,7 @@ abstract contract BondingCurve is IBondingCurve, OracleRef, PCVSplitter, Timed {
     function _incentivize() internal virtual {
         if (isTimeEnded()) {
             _initTimed(); // reset window
-            fei().mint(msg.sender, incentiveAmount);
+            cowrie().mint(msg.sender, incentiveAmount);
         }
     }
 
@@ -207,7 +207,7 @@ abstract contract BondingCurve is IBondingCurve, OracleRef, PCVSplitter, Timed {
         returns (Decimal.D256 memory);
 
     /// @notice returns the integral of the bonding curve solved for the amount of tokens out for a certain amount of value in
-    /// @param adjustedAmountIn this is the value in FEI of the underlying asset coming in
+    /// @param adjustedAmountIn this is the value in COWRIE of the underlying asset coming in
     function _getBondingCurveAmountOut(uint256 adjustedAmountIn)
         internal
         view

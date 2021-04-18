@@ -31,7 +31,7 @@ interface IIncentiveOrchestrator is IOrchestrator {
     function init(
         address core,
         address bondingCurveOracle,
-        address fei,
+        address cowrie,
         address router,
         uint32 growthRate
     ) external returns (address uniswapIncentive);
@@ -49,7 +49,7 @@ interface IControllerOrchestrator is IOrchestrator {
         address core,
         address bondingCurveOracle,
         address ethUniswapPCVDeposit,
-        address fei,
+        address cowrie,
         address router,
         uint256 reweightIncentive,
         uint256 reweightMinDistanceBPs
@@ -60,7 +60,7 @@ interface IIDOOrchestrator is IOrchestrator {
     function init(
         address core,
         address admin,
-        address tribe,
+        address dunia,
         address pair,
         address router,
         uint256 releaseWindowDuration
@@ -81,8 +81,8 @@ interface IGenesisOrchestrator is IOrchestrator {
 interface IStakingOrchestrator is IOrchestrator {
     function init(
         address core,
-        address tribeFeiPair,
-        address tribe,
+        address duniaCowriePair,
+        address dunia,
         uint stakingDuration,
         uint dripFrequency,
         uint incentiveAmount
@@ -91,7 +91,7 @@ interface IStakingOrchestrator is IOrchestrator {
 
 interface IGovernanceOrchestrator is IOrchestrator {
     function init(
-        address tribe,
+        address dunia,
         address admin,
         uint256 timelockDelay
     ) external returns (address governorAlpha, address timelock);

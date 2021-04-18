@@ -2,14 +2,14 @@ pragma solidity ^0.6.0;
 pragma experimental ABIEncoderV2;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "../token/IFei.sol";
+import "../token/ICowrie.sol";
 
-interface ITribe is IERC20 {
+interface IDunia is IERC20 {
     function delegate(address delegatee) external;
 }
 
 /// @title TimelockedDelegator interface
-/// @author Fei Protocol
+/// @author Cowrie Protocol
 interface ITimelockedDelegator {
     // ----------- Events -----------
 
@@ -34,5 +34,5 @@ interface ITimelockedDelegator {
 
     function totalDelegated() external view returns (uint256);
 
-    function tribe() external view returns (ITribe);
+    function dunia() external view returns (IDunia);
 }

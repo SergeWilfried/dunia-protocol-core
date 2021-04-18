@@ -1,12 +1,12 @@
 ---
-description: A PCV Controller for reweighting ETH/FEI Uniswap prices
+description: A PCV Controller for reweighting ETH/COWRIE Uniswap prices
 ---
 
 # EthUniswapPCVController
 
 ## Contract
 
-[EthUniswapPCVController.sol](https://github.com/fei-protocol/fei-protocol-core/blob/master/contracts/pcv/EthUniswapPCVController.sol) implements [IUniswapPCVController](https://github.com/fei-protocol/fei-protocol-core/blob/master/contracts/pcv/IUniswapPCVController.sol), [UniRef](https://github.com/fei-protocol/fei-protocol-core/blob/master/contracts/refs/UniRef.sol)
+[EthUniswapPCVController.sol](https://github.com/cowrie-protocol/cowrie-protocol-core/blob/master/contracts/pcv/EthUniswapPCVController.sol) implements [IUniswapPCVController](https://github.com/cowrie-protocol/cowrie-protocol-core/blob/master/contracts/pcv/IUniswapPCVController.sol), [UniRef](https://github.com/cowrie-protocol/cowrie-protocol-core/blob/master/contracts/refs/UniRef.sol)
 
 ## Description
 
@@ -19,7 +19,7 @@ Reweights are used to return the Uniswap spot price of an associated PCV Deposit
 1. withdraw 99% of the ETH from the UniswapPCVDeposit
 2. execute a trade with held ETH to bring the spot price back up to peg
 3. deposit remaining ETH balance back into the Uniswap PCV Deposit
-4. burn excess held FEI
+4. burn excess held COWRIE
 
 {% hint style="info" %}
 Only 99% is withdrawn because if there are no other LPs there could be rounding errors against dust
@@ -30,13 +30,13 @@ Only 99% is withdrawn because if there are no other LPs there could be rounding 
 The reweight is open to a keeper when both of the following conditions are met:
 
 * the distance from the peg is at least the minimum \(initially 1%\)
-* the [UniswapIncentive](../fei-stablecoin/uniswapincentive.md) contract is at incentive parity
+* the [UniswapIncentive](../cowrie-stablecoin/uniswapincentive.md) contract is at incentive parity
 
 Governor⚖️and Guardian🛡contracts can force a reweight at any time, or update the minimum distance requirement.
 
 ### Reweight incentives
 
-Reweight executions are incentivized with 500 FEI if the controller is appointed as a Minter💰. Governance can adjust this incentive amount.
+Reweight executions are incentivized with 500 COWRIE if the controller is appointed as a Minter💰. Governance can adjust this incentive amount.
 
 ## [Access Control](../access-control/) 
 
@@ -63,11 +63,11 @@ Change the PCV Deposit contract
 {% endtab %}
 
 {% tab title="ReweightIncentiveUpdate" %}
-Change the FEI reward for reweighting
+Change the COWRIE reward for reweighting
 
 | type | param | description |
 | :--- | :--- | :--- |
-| uint256 | \_amount | FEI reward amount |
+| uint256 | \_amount | COWRIE reward amount |
 {% endtab %}
 
 {% tab title="ReweightMinDistanceUpdate" %}
@@ -103,7 +103,7 @@ Returns the PCV Deposit address this controller focuses on reweighting.
 function incentiveContract() external returns (IUniswapIncentive);
 ```
 
-Returns the [UniswapIncentive](../fei-stablecoin/uniswapincentive.md) contract used to determine reweight eligibility.
+Returns the [UniswapIncentive](../cowrie-stablecoin/uniswapincentive.md) contract used to determine reweight eligibility.
 
 ### reweightIncentiveAmount
 
@@ -111,7 +111,7 @@ Returns the [UniswapIncentive](../fei-stablecoin/uniswapincentive.md) contract u
 function reweightIncentiveAmount() external returns (uint256);
 ```
 
-Returns the amount of FEI received by any keeper who successfully executes a reweight.
+Returns the amount of COWRIE received by any keeper who successfully executes a reweight.
 
 ### reweightWithdrawBPs
 
@@ -127,7 +127,7 @@ Returns the amount of PCV withdrawn during a reweight in basis points terms.
 function reweightEligible() external view returns (bool);
 ```
 
-Returns true when the distance from the peg is at least the minimum \(initially 1%\) and the [UniswapIncentive](../fei-stablecoin/uniswapincentive.md) contract is at incentive parity, otherwise false.
+Returns true when the distance from the peg is at least the minimum \(initially 1%\) and the [UniswapIncentive](../cowrie-stablecoin/uniswapincentive.md) contract is at incentive parity, otherwise false.
 
 ### minDistanceForReweight
 
@@ -150,10 +150,10 @@ function reweight() external;
 
 Executes a reweight if `reweightEligible.`
 
-Rewards the caller with 500 FEI.
+Rewards the caller with 500 COWRIE.
 
 {% hint style="info" %}
-This method is [pausable](../../governance/fei-guardian.md)
+This method is [pausable](../../governance/cowrie-guardian.md)
 {% endhint %}
 
 ## Governor- Or Guardian-Only⚖️🛡 State-Changing Functions
@@ -164,7 +164,7 @@ This method is [pausable](../../governance/fei-guardian.md)
 function forceReweight() external;
 ```
 
-Forces a reweight execution. No FEI incentive for doing this. Fails if the Uniswap spot price is already at or above the peg.
+Forces a reweight execution. No COWRIE incentive for doing this. Fails if the Uniswap spot price is already at or above the peg.
 
 ## Governor-Only⚖️ State-Changing Functions
 
@@ -204,7 +204,7 @@ emits `PCVDepositUpdate`
 function setReweightIncentive(uint256 amount) external;
 ```
 
-Sets the keeper incentive for executing a reweight to `amount` of FEI
+Sets the keeper incentive for executing a reweight to `amount` of COWRIE
 
 emits `ReweightIncentiveUpdate`
 

@@ -24,7 +24,7 @@ describe('UniswapOracle', function () {
     this.cursor = this.startTime.add(this.delta);
 
     this.cumulative = this.hundredTwelve.mul(this.delta).mul(new BN(500)).div(new BN(1e12));
-    this.pair = await MockPairTrade.new(this.cumulative, 0, this.cursor, 100000, 50000000); // 500:1 FEI/ETH initial price
+    this.pair = await MockPairTrade.new(this.cumulative, 0, this.cursor, 100000, 50000000); // 500:1 COWRIE/ETH initial price
 
     this.duration = new BN('600');
     this.oracle = await UniswapOracle.new(this.core.address, this.pair.address, this.duration, true); // 10 min TWAP using price0

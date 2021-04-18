@@ -4,19 +4,19 @@ const CoreOrchestrator = artifacts.require("CoreOrchestrator");
 const GenesisGroup = artifacts.require("GenesisGroup");
 const IDO = artifacts.require("IDO");
 const Core = artifacts.require("Core");
-const Fei = artifacts.require("Fei");
-const Tribe = artifacts.require("Tribe");
+const Cowrie = artifacts.require("Cowrie");
+const Dunia = artifacts.require("Dunia");
 const IUniswapV2Pair = artifacts.require("IUniswapV2Pair");
 const TimelockedDelegator = artifacts.require("TimelockedDelegator");
-const StakingRewards = artifacts.require("FeiStakingRewards");
-const FeiRewardsDistributor = artifacts.require("FeiRewardsDistributor");
+const StakingRewards = artifacts.require("DuniaStakingRewards");
+const DuniaRewardsDistributor = artifacts.require("DuniaRewardsDistributor");
 
 const EthBondingCurve = artifacts.require("EthBondingCurve");
 const UniswapOracle = artifacts.require("UniswapOracle");
 const BondingCurveOracle = artifacts.require("BondingCurveOracle");
 const EthUniswapPCVController = artifacts.require("EthUniswapPCVController");
 const UniswapIncentive = artifacts.require("UniswapIncentive");
-const FeiRouter = artifacts.require("FeiRouter");
+const CowrieRouter = artifacts.require("CowrieRouter");
 
 // Assumes the following:
 // Genesis <60s
@@ -29,8 +29,8 @@ module.exports = async function(callback) {
   let accounts = await web3.eth.getAccounts();
   let co = await CoreOrchestrator.deployed();
   let core = await Core.at(await co.core());
-  let fei = await Fei.at(await core.fei());
-  let tribe = await Tribe.at(await core.tribe());
+  let cowrie = await Cowrie.at(await core.cowrie());
+  let dunia = await Dunia.at(await core.dunia());
   let ido = await IDO.at(await co.ido());
   let pair = await IUniswapV2Pair.at(await ido.pair());
   let td = await TimelockedDelegator.at(await co.timelockedDelegator());
@@ -41,7 +41,7 @@ module.exports = async function(callback) {
   let bco = await BondingCurveOracle.at(await co.bondingCurveOracle());
   let ui = await UniswapIncentive.at(await co.uniswapIncentive());
   let controller = await EthUniswapPCVController.at(await co.ethUniswapPCVController());
-  let router = await FeiRouter.at(await co.feiRouter());
+  let router = await CowrieRouter.at(await co.duniaRouter());
 
   console.log('Init Genesis');
   await co.beginGenesis();
@@ -49,8 +49,8 @@ module.exports = async function(callback) {
   console.log('Init Staking');
   await co.initStaking();
 
-  let staking = await StakingRewards.at(await co.feiStakingRewards());
-  let distributor = await FeiRewardsDistributor.at(await co.feiRewardsDistributor());
+  let staking = await StakingRewards.at(await co.duniaStakingRewards());
+  let distributor = await DuniaRewardsDistributor.at(await co.duniaRewardsDistributor());
   let gg = await GenesisGroup.at(await co.genesisGroup());
 
   let ethAmount = new BN('100000000000000000000000');
@@ -75,16 +75,16 @@ module.exports = async function(callback) {
   let launchGas = launch['receipt']['gasUsed'];
   let coreComplete = await core.hasGenesisGroupCompleted();
   let bcoInitPrice = await bco.initialUSDPrice();
-  let ggFei = await fei.balanceOf(await gg.address);
-  let ggTribe = await tribe.balanceOf(await gg.address);
+  let ggFei = await cowrie.balanceOf(await gg.address);
+  let ggTribe = await dunia.balanceOf(await gg.address);
   
-  console.log(`GG Launch: complete=${coreComplete}, initPrice= ${bcoInitPrice / 1e18}, fei=${stringify(ggFei)}, tribe=${stringify(ggTribe)}`); 
+  console.log(`GG Launch: complete=${coreComplete}, initPrice= ${bcoInitPrice / 1e18}, cowrie=${stringify(ggFei)}, dunia=${stringify(ggTribe)}`); 
 
   let redeem = await gg.redeem(accounts[0]);
   let redeemGas = redeem['receipt']['gasUsed'];
-  let redeemFei = await fei.balanceOf(accounts[0]);
-  let redeemTribe = await tribe.balanceOf(accounts[0]);
-  console.log(`GG Redeem: fei=${stringify(redeemFei)}, tribe=${stringify(redeemTribe)}`);
+  let redeemFei = await cowrie.balanceOf(accounts[0]);
+  let redeemTribe = await dunia.balanceOf(accounts[0]);
+  console.log(`GG Redeem: cowrie=${stringify(redeemFei)}, dunia=${stringify(redeemTribe)}`);
 
   console.log('Sleeping for 100s');
   await sleep(100000);
@@ -98,7 +98,7 @@ module.exports = async function(callback) {
   let tribeIdoReserves = idoReserves[1];
   let idoTotalLiquidity = await pair.totalSupply();
 
-  console.log(`IDO Reserves: fei=${stringify(feiIdoReserves)}, tribe=${stringify(tribeIdoReserves)}, liquidity=${stringify(idoTotalLiquidity)}`);
+  console.log(`IDO Reserves: cowrie=${stringify(feiIdoReserves)}, dunia=${stringify(tribeIdoReserves)}, liquidity=${stringify(idoTotalLiquidity)}`);
   await ido.release(accounts[0], '1', {from: accounts[0]}); //poke
 
   let idoReleaseAmount = await ido.availableForRelease();
@@ -110,19 +110,19 @@ module.exports = async function(callback) {
 
   await td.release(accounts[0], '1', {from: accounts[0]}); // poke
 
-  let adminPreRedeemedTribe = await tribe.balanceOf(accounts[0]);
+  let adminPreRedeemedTribe = await dunia.balanceOf(accounts[0]);
   let tribeReleaseAmount = await td.availableForRelease();
   let adminTribeRedeem = await td.release(accounts[0], tribeReleaseAmount, {from: accounts[0]});
   let adminTribeRedeemGas = adminTribeRedeem['receipt']['gasUsed'];
-  let adminPostRedeemedTribe = await tribe.balanceOf(accounts[0]);
+  let adminPostRedeemedTribe = await dunia.balanceOf(accounts[0]);
   let adminNetRedeemed = adminPostRedeemedTribe.sub(adminPreRedeemedTribe);
   console.log(`admin TRIBE claim: pre=${stringify(adminPreRedeemedTribe)}, post=${stringify(adminPostRedeemedTribe)}, net=${stringify(adminNetRedeemed)}`);
 
-  let preTimelockedTribe = await tribe.balanceOf(await td.address);
+  let preTimelockedTribe = await dunia.balanceOf(await td.address);
   let adminDelegation = await td.delegate(accounts[1], ethAmount, {from: accounts[0]});
   let adminDelegationGas = adminDelegation['receipt']['gasUsed'];
-  let adminDelegatedVotes = await tribe.getCurrentVotes(accounts[1]);
-  let remainingTimelockedTribe = await tribe.balanceOf(await td.address);
+  let adminDelegatedVotes = await dunia.getCurrentVotes(accounts[1]);
+  let remainingTimelockedTribe = await dunia.balanceOf(await td.address);
   console.log(`TRIBE delegation: preBalance=${stringify(preTimelockedTribe)}, postBalance=${stringify(remainingTimelockedTribe)}, delegated=${stringify(adminDelegatedVotes)}`);
 
   let pairBalance = await pair.balanceOf(accounts[0]);
@@ -133,32 +133,32 @@ module.exports = async function(callback) {
   console.log(`Staking pool stake: pool=${stringify(stakingBalance)}`);
 
   let atScale = await bc.atScale();
-  let feiBefore = await fei.balanceOf(accounts[0]);
+  let feiBefore = await cowrie.balanceOf(accounts[0]);
   let triple = ethAmount.mul(new BN('3'));
   let preScaleBCPurchase = await bc.purchase(accounts[0], triple, {from: accounts[0], value: triple});
   let preScaleBCGas = preScaleBCPurchase['receipt']['gasUsed'];
-  let feiAfter = await fei.balanceOf(accounts[0]);
+  let feiAfter = await cowrie.balanceOf(accounts[0]);
   let netFei = feiAfter.sub(feiBefore);
-  console.log(`Bonding Curve Purchase Pre: eth=${stringify(triple)}, fei=${stringify(netFei)} atScaleBefore=${atScale}`);
+  console.log(`Bonding Curve Purchase Pre: eth=${stringify(triple)}, cowrie=${stringify(netFei)} atScaleBefore=${atScale}`);
 
   atScale = await bc.atScale();
-  feiBefore = await fei.balanceOf(accounts[0]);
+  feiBefore = await cowrie.balanceOf(accounts[0]);
   let postScaleBCPurchase = await bc.purchase(accounts[0], ethAmount, {from: accounts[0], value: ethAmount});
   let postScaleBCGas = postScaleBCPurchase['receipt']['gasUsed'];
-  feiAfter = await fei.balanceOf(accounts[0]);
+  feiAfter = await cowrie.balanceOf(accounts[0]);
   netFei = feiAfter.sub(feiBefore);
-  console.log(`Bonding Curve Purchase Post: eth=${stringify(ethAmount)}, fei=${stringify(netFei)} atScaleBefore=${atScale}`);
+  console.log(`Bonding Curve Purchase Post: eth=${stringify(ethAmount)}, cowrie=${stringify(netFei)} atScaleBefore=${atScale}`);
 
   let allocate = await bc.allocate();
   let allocateGas = allocate['receipt']['gasUsed'];
   console.log(`Allocate: gas=${allocateGas}`);
 
-  feiBefore = await fei.balanceOf(accounts[0]);
+  feiBefore = await cowrie.balanceOf(accounts[0]);
   let tenX = ethAmount.mul(new BN('10'));
-  await fei.approve(await router.address, tenX, {from: accounts[0]});
+  await cowrie.approve(await router.address, tenX, {from: accounts[0]});
   let feiSell = await router.sellFei(tenX, ethAmount, 0, accounts[0], ethAmount, {from: accounts[0]});
   let feiSellGas = feiSell['receipt']['gasUsed'];
-  feiAfter = await fei.balanceOf(accounts[0]);
+  feiAfter = await cowrie.balanceOf(accounts[0]);
   let burned = feiBefore.sub(feiAfter).sub(tenX);
   console.log(`Uni Sell: amt=${stringify(tenX)}, burned=${stringify(burned)}`);
 
@@ -166,10 +166,10 @@ module.exports = async function(callback) {
   await sleep(30000);
 
   let pairBeforeWithdraw = await pair.balanceOf(accounts[0]);
-  let tribeBeforeClaim = await tribe.balanceOf(accounts[0]);
+  let tribeBeforeClaim = await dunia.balanceOf(accounts[0]);
   let claimed = await staking.exit({from: accounts[0]});
   let claimedGas = claimed['receipt']['gasUsed'];
-  let tribeAfterClaim = await tribe.balanceOf(accounts[0]);
+  let tribeAfterClaim = await dunia.balanceOf(accounts[0]);
   let tribeEarned = tribeAfterClaim.sub(tribeBeforeClaim);
   let pairAfterWithdraw = await pair.balanceOf(accounts[0]);
 

@@ -6,7 +6,7 @@ description: An ETH/USDC Uniswap TWAP snapshot oracle
 
 ## Contract
 
-[UniswapOracle.sol](https://github.com/fei-protocol/fei-protocol-core/blob/master/contracts/oracle/UniswapOracle.sol) implements [IUniswapOracle](https://github.com/fei-protocol/fei-protocol-core/blob/master/contracts/oracle/IUniswapOracle.sol), [CoreRef](https://github.com/fei-protocol/fei-protocol-core/blob/master/contracts/refs/CoreRef.sol)
+[UniswapOracle.sol](https://github.com/cowrie-protocol/cowrie-protocol-core/blob/master/contracts/oracle/UniswapOracle.sol) implements [IUniswapOracle](https://github.com/cowrie-protocol/cowrie-protocol-core/blob/master/contracts/oracle/IUniswapOracle.sol), [CoreRef](https://github.com/cowrie-protocol/cowrie-protocol-core/blob/master/contracts/refs/CoreRef.sol)
 
 ## Description
 
@@ -51,10 +51,10 @@ The Governor ⚖️can change the duration.
 function read() external view returns (Decimal.D256 memory, bool);
 ```
 
-Reads the oracle value and reports the peg as FEI per underlying. The boolean value returned informs whether the reported value is valid. Invalid means the oracle is uninitialized or the contract is paused.
+Reads the oracle value and reports the peg as COWRIE per underlying. The boolean value returned informs whether the reported value is valid. Invalid means the oracle is uninitialized or the contract is paused.
 
 {% hint style="info" %}
-This method is [pausable](../../governance/fei-guardian.md). If paused, it won't revert but it will return valid as false
+This method is [pausable](../../governance/cowrie-guardian.md). If paused, it won't revert but it will return valid as false
 {% endhint %}
 
 ### isOutdated
@@ -110,7 +110,7 @@ Updates the oracle with new time-weighted average price data from Uniswap if the
 emits `Update`
 
 {% hint style="info" %}
-This method is [pausable](../../governance/fei-guardian.md)
+This method is [pausable](../../governance/cowrie-guardian.md)
 {% endhint %}
 
 ## Governor-Only⚖️ State-Changing Functions

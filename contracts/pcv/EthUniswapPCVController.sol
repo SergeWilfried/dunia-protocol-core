@@ -8,7 +8,7 @@ import "../refs/UniRef.sol";
 import "../external/UniswapV2Library.sol";
 
 /// @title a IUniswapPCVController implementation for ETH
-/// @author Fei Protocol
+/// @author Cowrie Protocol
 contract EthUniswapPCVController is IUniswapPCVController, UniRef {
     using Decimal for Decimal.D256;
     using SafeMathCopy for uint256;
@@ -20,15 +20,15 @@ contract EthUniswapPCVController is IUniswapPCVController, UniRef {
     /// @notice returns the linked pcv deposit contract
     IPCVDeposit public override pcvDeposit;
 
-    /// @notice gets the FEI reward incentive for reweighting
+    /// @notice gets the COWRIE reward incentive for reweighting
     uint256 public override reweightIncentiveAmount;
     Decimal.D256 internal _minDistanceForReweight;
 
     /// @notice EthUniswapPCVController constructor
-    /// @param _core Fei Core for reference
+    /// @param _core Cowrie Core for reference
     /// @param _pcvDeposit PCV Deposit to reweight
     /// @param _oracle oracle for reference
-    /// @param _incentiveAmount amount of FEI for triggering a reweight
+    /// @param _incentiveAmount amount of COWRIE for triggering a reweight
     /// @param _minDistanceForReweightBPs minimum distance from peg to reweight in basis points
     /// @param _pair Uniswap pair contract to reweight
     /// @param _router Uniswap Router
@@ -129,11 +129,11 @@ contract EthUniswapPCVController is IUniswapPCVController, UniRef {
 
     /// @notice returns the linked Uniswap incentive contract
     function incentiveContract() public view override returns(IUniswapIncentive) {
-        return IUniswapIncentive(fei().incentiveContract(address(pair)));
+        return IUniswapIncentive(cowrie().incentiveContract(address(pair)));
     }
 
     function _incentivize() internal ifMinterSelf {
-        fei().mint(msg.sender, reweightIncentiveAmount);
+        cowrie().mint(msg.sender, reweightIncentiveAmount);
     }
 
     function _reweight() internal {

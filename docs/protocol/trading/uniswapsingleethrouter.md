@@ -6,7 +6,7 @@ description: A Uniswap router focusing on single ETH/token swaps
 
 ## Contract
 
-[UniswapSingleEthRouter.sol](https://github.com/fei-protocol/fei-protocol-core/blob/master/contracts/router/UniswapSingleEthRouter.sol) implements [IUniswapSingleEthRouter](https://github.com/fei-protocol/fei-protocol-core/blob/master/contracts/router/IUniswapSingleEthRouter.sol)
+[UniswapSingleEthRouter.sol](https://github.com/cowrie-protocol/cowrie-protocol-core/blob/master/contracts/router/UniswapSingleEthRouter.sol) implements [IUniswapSingleEthRouter](https://github.com/cowrie-protocol/cowrie-protocol-core/blob/master/contracts/router/IUniswapSingleEthRouter.sol)
 
 ## Description
 
@@ -46,5 +46,5 @@ function swapExactTokensForETH(
 ) external returns (uint256 amountOut);
 ```
 
-Sell `amountIn` FEI to receive at least `amountOutMin` ETH and send the FEI to address `to` before the block timestamp exceeds `deadline`. 
+Sell `amountIn` COWRIE to receive at least `amountOutMin` ETH and send the COWRIE to address `to` before the block timestamp exceeds `deadline`. 
 

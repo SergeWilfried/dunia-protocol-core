@@ -6,24 +6,24 @@ const {
     expectRevert,
     time,
     expect,
-    Fei,
-    Tribe,
+    Cowrie,
+    Dunia,
     MockStakingRewards,
-    FeiRewardsDistributor,
+    DuniaRewardsDistributor,
     MockERC20,
     MockBot,
     getCore,
     expectApprox
   } = require('../helpers');
 
-  describe('FeiRewardsDistributor', function () {
+  describe('DuniaRewardsDistributor', function () {
 
     beforeEach(async function () {
       
       this.core = await getCore(true);
   
-      this.fei = await Fei.at(await this.core.fei());
-      this.tribe = await Tribe.at(await this.core.tribe());
+      this.cowrie = await Cowrie.at(await this.core.cowrie());
+      this.dunia = await Dunia.at(await this.core.dunia());
   
       this.decimals = new BN('1000000000000000000');
       this.frequency = new BN('100000000000');
@@ -34,7 +34,7 @@ const {
 
       this.staking = await MockStakingRewards.new();
 
-      this.distributor = await FeiRewardsDistributor.new(
+      this.distributor = await DuniaRewardsDistributor.new(
           this.core.address,
           this.staking.address,
           this.window,
@@ -224,7 +224,7 @@ const {
         describe('immediate', function() {
             describe('before frequency', function() {
                 it('reverts', async function() {
-                    await expectRevert(this.distributor.drip({from: userAddress}), "FeiRewardsDistributor: Not passed drip frequency");
+                    await expectRevert(this.distributor.drip({from: userAddress}), "DuniaRewardsDistributor: Not passed drip frequency");
                 });
             });
             describe('after frequency', function() {
@@ -243,7 +243,7 @@ const {
                 });
                 it('updates balances', async function() {
                     await expectApprox(await this.distributor.rewardBalance(), this.tribeBefore.sub(this.expectedDrip));
-                    await expectApprox(await this.tribe.balanceOf(this.staking.address), this.expectedDrip);
+                    await expectApprox(await this.dunia.balanceOf(this.staking.address), this.expectedDrip);
                     await expectApprox(await this.distributor.distributedRewards(), this.expectedDrip);
                     await expectApprox(await this.distributor.totalReward(), this.rewardAmount);
                     await expectApprox(await this.distributor.releasedReward(), new BN('0'));
@@ -251,7 +251,7 @@ const {
                 });
     
                 it('incentivizes', async function() {
-                    expect(await this.fei.balanceOf(userAddress)).to.be.bignumber.equal(this.incentiveAmount);
+                    expect(await this.cowrie.balanceOf(userAddress)).to.be.bignumber.equal(this.incentiveAmount);
                 });
 
                 describe('second', function() {
@@ -271,7 +271,7 @@ const {
                     });
                     it('updates balances', async function() {
                         await expectApprox(await this.distributor.rewardBalance(), this.tribeBefore.sub(this.secondExpectedDrip));
-                        await expectApprox(await this.tribe.balanceOf(this.staking.address), this.totalDrip);
+                        await expectApprox(await this.dunia.balanceOf(this.staking.address), this.totalDrip);
                         await expectApprox(await this.distributor.distributedRewards(), this.totalDrip);
                         await expectApprox(await this.distributor.totalReward(), this.rewardAmount);
                         await expectApprox(await this.distributor.releasedReward(), new BN('0'));
@@ -279,7 +279,7 @@ const {
                     });
 
                     it('incentivizes', async function() {
-                        expect(await this.fei.balanceOf(userAddress)).to.be.bignumber.equal(this.incentiveAmount.mul(new BN('2')));
+                        expect(await this.cowrie.balanceOf(userAddress)).to.be.bignumber.equal(this.incentiveAmount.mul(new BN('2')));
                     });
                 });
             });
@@ -302,7 +302,7 @@ const {
                 });
                 it('updates balances', async function() {
                     await expectApprox(await this.distributor.rewardBalance(), this.tribeBefore.sub(this.expectedDrip));
-                    await expectApprox(await this.tribe.balanceOf(this.staking.address), this.expectedDrip);
+                    await expectApprox(await this.dunia.balanceOf(this.staking.address), this.expectedDrip);
                     await expectApprox(await this.distributor.distributedRewards(), this.expectedDrip);
                     await expectApprox(await this.distributor.totalReward(), this.rewardAmount);
                     await expectApprox(await this.distributor.releasedReward(), new BN('0'));
@@ -310,7 +310,7 @@ const {
                 });
     
                 it('incentivizes', async function() {
-                    expect(await this.fei.balanceOf(userAddress)).to.be.bignumber.equal(this.incentiveAmount);
+                    expect(await this.cowrie.balanceOf(userAddress)).to.be.bignumber.equal(this.incentiveAmount);
                 });
 
                 describe('second', function() {
@@ -330,7 +330,7 @@ const {
                     });
                     it('updates balances', async function() {
                         await expectApprox(await this.distributor.rewardBalance(), this.tribeBefore.sub(this.secondExpectedDrip));
-                        await expectApprox(await this.tribe.balanceOf(this.staking.address), this.totalDrip);
+                        await expectApprox(await this.dunia.balanceOf(this.staking.address), this.totalDrip);
                         await expectApprox(await this.distributor.distributedRewards(), this.totalDrip);
                         await expectApprox(await this.distributor.totalReward(), this.rewardAmount);
                         await expectApprox(await this.distributor.releasedReward(), new BN('0'));
@@ -338,7 +338,7 @@ const {
                     });
 
                     it('incentivizes', async function() {
-                        expect(await this.fei.balanceOf(userAddress)).to.be.bignumber.equal(this.incentiveAmount.mul(new BN('2')));
+                        expect(await this.cowrie.balanceOf(userAddress)).to.be.bignumber.equal(this.incentiveAmount.mul(new BN('2')));
                     });
                 });
             });
@@ -361,7 +361,7 @@ const {
                 });
                 it('updates balances', async function() {
                     await expectApprox(await this.distributor.rewardBalance(), this.tribeBefore.sub(this.expectedDrip));
-                    await expectApprox(await this.tribe.balanceOf(this.staking.address), this.expectedDrip);
+                    await expectApprox(await this.dunia.balanceOf(this.staking.address), this.expectedDrip);
                     await expectApprox(await this.distributor.distributedRewards(), this.expectedDrip);
                     await expectApprox(await this.distributor.totalReward(), this.rewardAmount);
                     await expectApprox(await this.distributor.releasedReward(), new BN('0'));
@@ -369,7 +369,7 @@ const {
                 });
     
                 it('incentivizes', async function() {
-                    expect(await this.fei.balanceOf(userAddress)).to.be.bignumber.equal(this.incentiveAmount);
+                    expect(await this.cowrie.balanceOf(userAddress)).to.be.bignumber.equal(this.incentiveAmount);
                 });
 
                 describe('second', function() {
@@ -389,7 +389,7 @@ const {
                     });
                     it('updates balances', async function() {
                         await expectApprox(await this.distributor.rewardBalance(), this.tribeBefore.sub(this.secondExpectedDrip));
-                        await expectApprox(await this.tribe.balanceOf(this.staking.address), this.totalDrip);
+                        await expectApprox(await this.dunia.balanceOf(this.staking.address), this.totalDrip);
                         await expectApprox(await this.distributor.distributedRewards(), this.totalDrip);
                         await expectApprox(await this.distributor.totalReward(), this.rewardAmount);
                         await expectApprox(await this.distributor.releasedReward(), new BN('0'));
@@ -397,7 +397,7 @@ const {
                     });
 
                     it('incentivizes', async function() {
-                        expect(await this.fei.balanceOf(userAddress)).to.be.bignumber.equal(this.incentiveAmount.mul(new BN('2')));
+                        expect(await this.cowrie.balanceOf(userAddress)).to.be.bignumber.equal(this.incentiveAmount.mul(new BN('2')));
                     });
                 });
             });
@@ -420,7 +420,7 @@ const {
                 });
                 it('updates balances', async function() {
                     await expectApprox(await this.distributor.rewardBalance(), this.tribeBefore.sub(this.expectedDrip));
-                    await expectApprox(await this.tribe.balanceOf(this.staking.address), this.expectedDrip);
+                    await expectApprox(await this.dunia.balanceOf(this.staking.address), this.expectedDrip);
                     await expectApprox(await this.distributor.distributedRewards(), this.expectedDrip);
                     await expectApprox(await this.distributor.totalReward(), this.rewardAmount);
                     await expectApprox(await this.distributor.releasedReward(), new BN('0'));
@@ -428,7 +428,7 @@ const {
                 });
     
                 it('incentivizes', async function() {
-                    expect(await this.fei.balanceOf(userAddress)).to.be.bignumber.equal(this.incentiveAmount);
+                    expect(await this.cowrie.balanceOf(userAddress)).to.be.bignumber.equal(this.incentiveAmount);
                 });
 
                 describe('second', function() {
@@ -448,7 +448,7 @@ const {
                     });
                     it('updates balances', async function() {
                         await expectApprox(await this.distributor.rewardBalance(), new BN('0'));
-                        await expectApprox(await this.tribe.balanceOf(this.staking.address), this.totalDrip);
+                        await expectApprox(await this.dunia.balanceOf(this.staking.address), this.totalDrip);
                         await expectApprox(await this.distributor.distributedRewards(), this.totalDrip);
                         await expectApprox(await this.distributor.totalReward(), this.rewardAmount);
                         await expectApprox(await this.distributor.releasedReward(), new BN('0'));
@@ -456,7 +456,7 @@ const {
                     });
 
                     it('incentivizes', async function() {
-                        expect(await this.fei.balanceOf(userAddress)).to.be.bignumber.equal(this.incentiveAmount.mul(new BN('2')));
+                        expect(await this.cowrie.balanceOf(userAddress)).to.be.bignumber.equal(this.incentiveAmount.mul(new BN('2')));
                     });
                 });
             });
@@ -479,7 +479,7 @@ const {
                 });
                 it('updates balances', async function() {
                     await expectApprox(await this.distributor.rewardBalance(), this.tribeBefore.sub(this.expectedDrip));
-                    await expectApprox(await this.tribe.balanceOf(this.staking.address), this.expectedDrip);
+                    await expectApprox(await this.dunia.balanceOf(this.staking.address), this.expectedDrip);
                     await expectApprox(await this.distributor.distributedRewards(), this.expectedDrip);
                     await expectApprox(await this.distributor.totalReward(), this.rewardAmount);
                     await expectApprox(await this.distributor.releasedReward(), new BN('0'));
@@ -487,13 +487,13 @@ const {
                 });
     
                 it('incentivizes', async function() {
-                    expect(await this.fei.balanceOf(userAddress)).to.be.bignumber.equal(this.incentiveAmount);
+                    expect(await this.cowrie.balanceOf(userAddress)).to.be.bignumber.equal(this.incentiveAmount);
                 });
 
                 describe('second', function() {
                     it('reverts', async function() {
                         await time.increase(this.window);
-                        await expectRevert(this.distributor.drip({from: userAddress}), "FeiRewardsDistributor: no rewards");
+                        await expectRevert(this.distributor.drip({from: userAddress}), "DuniaRewardsDistributor: no rewards");
                     });
                 });
             });

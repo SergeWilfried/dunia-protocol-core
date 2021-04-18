@@ -1,28 +1,28 @@
 ---
-description: A generic FEI bonding curve
+description: A generic COWRIE bonding curve
 ---
 
 # BondingCurve
 
 ## Contract
 
-[BondingCurve.sol](https://github.com/fei-protocol/fei-protocol-core/blob/master/contracts/bondingcurve/BondingCurve.sol) implements [IBondingCurve](https://github.com/fei-protocol/fei-protocol-core/blob/master/contracts/bondingcurve/IBondingCurve.sol), [OracleRef](https://github.com/fei-protocol/fei-protocol-core/blob/master/contracts/refs/OracleRef.sol), [PCVSplitter](https://github.com/fei-protocol/fei-protocol-core/blob/master/contracts/pcv/PCVSplitter.sol)
+[BondingCurve.sol](https://github.com/cowrie-protocol/cowrie-protocol-core/blob/master/contracts/bondingcurve/BondingCurve.sol) implements [IBondingCurve](https://github.com/cowrie-protocol/cowrie-protocol-core/blob/master/contracts/bondingcurve/IBondingCurve.sol), [OracleRef](https://github.com/cowrie-protocol/cowrie-protocol-core/blob/master/contracts/refs/OracleRef.sol), [PCVSplitter](https://github.com/cowrie-protocol/cowrie-protocol-core/blob/master/contracts/pcv/PCVSplitter.sol)
 
 ## Description
 
-An abstract bonding curve for purchasing FEI and routing of the purchased asset to PCV.
+An abstract bonding curve for purchasing COWRIE and routing of the purchased asset to PCV.
 
-The amount of PCV it takes in a purchase transaction to bring the curve to a total amount of FEI issued _T_ is determined by integrating the price function between the current FEI amount issued _C_ by the bonding curve and the target amount _T_ after the transaction. 
+The amount of PCV it takes in a purchase transaction to bring the curve to a total amount of COWRIE issued _T_ is determined by integrating the price function between the current COWRIE amount issued _C_ by the bonding curve and the target amount _T_ after the transaction. 
 
 ![Amount of PCV out for a purchase](../../.gitbook/assets/screen-shot-2021-02-14-at-3.04.23-pm.png)
 
-The quantity _T-C_ is the amount of FEI received by the transaction. Since _C_ is a known constant, we solve for _T_ by setting the formula equal to a PCV purchase quantity _Q_ and rearranging terms.
+The quantity _T-C_ is the amount of COWRIE received by the transaction. Since _C_ is a known constant, we solve for _T_ by setting the formula equal to a PCV purchase quantity _Q_ and rearranging terms.
 
-Post scale, the price should be $1 + _b_  times the peg, where _b_ is the variance buffer and the peg is reported as X per FEI. In the implementation, we use $1 - _b_ because the peg is inverted so the price relationship is also inverted.
+Post scale, the price should be $1 + _b_  times the peg, where _b_ is the variance buffer and the peg is reported as X per COWRIE. In the implementation, we use $1 - _b_ because the peg is inverted so the price relationship is also inverted.
 
 ### Allocation
 
-Incoming PCV is held temporarily to allow for batch transactions via the `allocate()` function. The PCV allocation gets split into a weighted list of PCV deposit contracts, \(see [PCVSplitter](https://github.com/fei-protocol/fei-protocol-core/blob/master/contracts/pcv/PCVSplitter.sol)\). While allocations can be called at any time, there is a 500 FEI incentive for calling it after each 24 hour window. To determine eligibility for the incentive, simply call `isTimeEnded()` on the contract. The time until the next incentive is available is `remainingTime()`.
+Incoming PCV is held temporarily to allow for batch transactions via the `allocate()` function. The PCV allocation gets split into a weighted list of PCV deposit contracts, \(see [PCVSplitter](https://github.com/cowrie-protocol/cowrie-protocol-core/blob/master/contracts/pcv/PCVSplitter.sol)\). While allocations can be called at any time, there is a 500 COWRIE incentive for calling it after each 24 hour window. To determine eligibility for the incentive, simply call `isTimeEnded()` on the contract. The time until the next incentive is available is `remainingTime()`.
 
 {% page-ref page="../references/timed.md" %}
 
@@ -34,13 +34,13 @@ Incoming PCV is held temporarily to allow for batch transactions via the `alloca
 
 {% tabs %}
 {% tab title="Purchase" %}
-Purchase of FEI on bonding curve
+Purchase of COWRIE on bonding curve
 
 | type | param | description |
 | :--- | :--- | :--- |
-| address indexed | \_to | recipient of FEI |
+| address indexed | \_to | recipient of COWRIE |
 | uint256 | \_amountIn | amount of purchase asset |
-| uint256 | \_amountOut | amount of FEI |
+| uint256 | \_amountOut | amount of COWRIE |
 {% endtab %}
 
 {% tab title="Allocate" %}
@@ -69,7 +69,7 @@ Governance change of Buffer
 {% endtab %}
 
 {% tab title="IncentiveAmountUpdate" %}
-Changes the FEI reward for calling `allocate()`
+Changes the COWRIE reward for calling `allocate()`
 
 | type | param | description |
 | :--- | :--- | :--- |
@@ -85,7 +85,7 @@ Changes the FEI reward for calling `allocate()`
 function getCurrentPrice() external view returns (Decimal.D256 memory);
 ```
 
-Returns current instantaneous bonding curve price. The price reported as FEI per X, with X being the underlying asset. This is analogous to the peg reported by the oracle.
+Returns current instantaneous bonding curve price. The price reported as COWRIE per X, with X being the underlying asset. This is analogous to the peg reported by the oracle.
 
 {% page-ref page="../oracles/" %}
 
@@ -102,7 +102,7 @@ function getAverageUSDPrice(uint256 amountIn)
     returns (Decimal.D256 memory);
 ```
 
-Returns the average price of a transaction of size `amountIn` ETH along bonding curve. The price here is reported as USD per FEI.
+Returns the average price of a transaction of size `amountIn` ETH along bonding curve. The price here is reported as USD per COWRIE.
 
 {% hint style="warning" %}
 Can be inaccurate if outdated, need to call `oracle().isOutdated()` to check
@@ -117,7 +117,7 @@ function getAmountOut(uint256 amountIn)
     returns (uint256 amountOut);
 ```
 
-Returns the amount `amountOut`of FEI received for a purchase of `amountIn` ETH.
+Returns the amount `amountOut`of COWRIE received for a purchase of `amountIn` ETH.
 
 {% hint style="warning" %}
 Can be inaccurate if outdated, need to call `oracle().isOutdated()` to check
@@ -161,7 +161,7 @@ The granularity of the buffer. Constant at 10,000.
 function totalPurchased() external view returns (uint256);
 ```
 
-Returns the cumulative amount of FEI issued via the bonding curve. Used in the bonding curve formula as the supply amount.
+Returns the cumulative amount of COWRIE issued via the bonding curve. Used in the bonding curve formula as the supply amount.
 
 ### getTotalPCVHeld
 
@@ -177,7 +177,7 @@ Returns the amount of PCV held in the contract and ready for allocation.
 function incentiveAmount() external view returns (uint256);
 ```
 
-Returns the amount of FEI sent to the keeper who calls `allocate()` while the incentive is active.
+Returns the amount of COWRIE sent to the keeper who calls `allocate()` while the incentive is active.
 
 ## Public State-Changing Functions
 
@@ -190,12 +190,12 @@ function purchase(address to, uint256 amountIn)
     returns (uint256 amountOut);
 ```
 
-Purchase `amountOut` FEI along the bonding curve for `amountIn` ETH and send the FEI to address `to`.
+Purchase `amountOut` COWRIE along the bonding curve for `amountIn` ETH and send the COWRIE to address `to`.
 
 emits `Purchase`
 
 {% hint style="info" %}
-This method is [pausable](../../governance/fei-guardian.md)
+This method is [pausable](../../governance/cowrie-guardian.md)
 {% endhint %}
 
 ## EOA-Only 👤 State-Changing Functions
@@ -211,7 +211,7 @@ Allocate the PCV held by the bonding curve to the weighted PCV allocations retur
 emits `Allocate`
 
 {% hint style="info" %}
-This method is [pausable](../../governance/fei-guardian.md)
+This method is [pausable](../../governance/cowrie-guardian.md)
 {% endhint %}
 
 ## Governor-Only**⚖️** State-Changing Functions

@@ -9,7 +9,7 @@ const {
   balance,
   expect,
   EthUniswapPCVController,
-  Fei,
+  Cowrie,
   MockBot,
   MockPCVDeposit,
   MockOracle,
@@ -26,16 +26,16 @@ describe('EthUniswapPCVController', function () {
   beforeEach(async function () {
     this.core = await getCore(true);
 
-    this.fei = await Fei.at(await this.core.fei());
+    this.cowrie = await Cowrie.at(await this.core.cowrie());
     this.oracle = await MockOracle.new(500);
     this.token = await MockWeth.new();
-    this.pair = await MockPair.new(this.token.address, this.fei.address);
+    this.pair = await MockPair.new(this.token.address, this.cowrie.address);
     this.router = await MockRouter.new(this.pair.address);
     await this.router.setWETH(this.token.address);
     this.pcvDeposit = await MockPCVDeposit.new(this.pair.address);
     this.incentive = await MockIncentive.new(this.core.address);
 
-    await this.fei.setIncentiveContract(this.pair.address, this.incentive.address, {from: governorAddress});
+    await this.cowrie.setIncentiveContract(this.pair.address, this.incentive.address, {from: governorAddress});
     await this.incentive.setExempt(true);
 
     this.pcvController = await EthUniswapPCVController.new(
@@ -48,30 +48,30 @@ describe('EthUniswapPCVController', function () {
       this.router.address
     );
     await this.core.grantPCVController(this.pcvController.address, {from: governorAddress});
-    await this.fei.mint(this.pair.address, 50000000, {from: minterAddress});
+    await this.cowrie.mint(this.pair.address, 50000000, {from: minterAddress});
   });
 
   describe('Sole LP', function() {
     beforeEach(async function() {
       await this.pcvDeposit.deposit(100000, {value: 100000}); // deposit LP
-      await this.fei.mint(this.pcvController.address, 50000000, {from: minterAddress}); // seed Fei to burn
+      await this.cowrie.mint(this.pcvController.address, 50000000, {from: minterAddress}); // seed Cowrie to burn
       await this.pcvController.forceReweight({from: guardianAddress});
     });
     it('pcvDeposit gets all ETH', async function() {
       expect(await this.pcvDeposit.totalValue()).to.be.bignumber.equal(new BN(100000));
       expect(await balance.current(this.pcvController.address)).to.be.bignumber.equal(new BN(0));
     });
-    it('controller has no FEI', async function() {
-      expect(await this.fei.balanceOf(this.pcvController.address)).to.be.bignumber.equal(new BN(0));
+    it('controller has no COWRIE', async function() {
+      expect(await this.cowrie.balanceOf(this.pcvController.address)).to.be.bignumber.equal(new BN(0));
     });
   });
 
   describe('With Other LP', function() {
     describe('At peg', function() {
       beforeEach(async function() {
-        await this.pair.set(100000, 50000000, LIQUIDITY_INCREMENT, {from: userAddress, value: 100000}); // 500:1 FEI/ETH with 10k liquidity
+        await this.pair.set(100000, 50000000, LIQUIDITY_INCREMENT, {from: userAddress, value: 100000}); // 500:1 COWRIE/ETH with 10k liquidity
         await this.pcvDeposit.deposit(100000, {value: 100000}); // deposit LP
-        await this.fei.mint(this.pcvController.address, 50000000, {from: minterAddress}); // seed Fei to burn
+        await this.cowrie.mint(this.pcvController.address, 50000000, {from: minterAddress}); // seed Cowrie to burn
       });
 
       it('reverts', async function() {
@@ -81,9 +81,9 @@ describe('EthUniswapPCVController', function () {
 
     describe('Above peg', function() {
       beforeEach(async function() {
-        await this.pair.set(100000, 49000000, LIQUIDITY_INCREMENT, {from: userAddress, value: 100000}); // 490:1 FEI/ETH with 10k liquidity
+        await this.pair.set(100000, 49000000, LIQUIDITY_INCREMENT, {from: userAddress, value: 100000}); // 490:1 COWRIE/ETH with 10k liquidity
         await this.pcvDeposit.deposit(100000, {value: 100000}); // deposit LP
-        await this.fei.mint(this.pcvController.address, 50000000, {from: minterAddress}); // seed Fei to burn
+        await this.cowrie.mint(this.pcvController.address, 50000000, {from: minterAddress}); // seed Cowrie to burn
       });
 
       it('reverts', async function() {
@@ -94,9 +94,9 @@ describe('EthUniswapPCVController', function () {
     describe('Below peg', function() {
       describe('Enough to reweight', function() {
         beforeEach(async function() {
-          await this.pair.set(100000, 51000000, LIQUIDITY_INCREMENT, {from: userAddress, value: 100000}); // 490:1 FEI/ETH with 10k liquidity
+          await this.pair.set(100000, 51000000, LIQUIDITY_INCREMENT, {from: userAddress, value: 100000}); // 490:1 COWRIE/ETH with 10k liquidity
           await this.pcvDeposit.deposit(100000, {value: 100000}); // deposit LP
-          await this.fei.mint(this.pcvController.address, 50000000, {from: minterAddress}); // seed Fei to burn
+          await this.cowrie.mint(this.pcvController.address, 50000000, {from: minterAddress}); // seed Cowrie to burn
           expectEvent(
             await this.pcvController.forceReweight({from: guardianAddress}),
             'Reweight',
@@ -112,17 +112,17 @@ describe('EthUniswapPCVController', function () {
           expect(await balance.current(this.pcvController.address)).to.be.bignumber.equal(new BN(0));
         });
 
-        it('controller has no FEI', async function() {
-          expect(await this.fei.balanceOf(this.pcvController.address)).to.be.bignumber.equal(new BN(0));
+        it('controller has no COWRIE', async function() {
+          expect(await this.cowrie.balanceOf(this.pcvController.address)).to.be.bignumber.equal(new BN(0));
         });
       });
 
       describe('Not enough to reweight', function() {
         beforeEach(async function() {
-          await this.fei.mint(this.pair.address, 10000000000, {from: minterAddress});
-          await this.pair.set(100000, 10000000000, LIQUIDITY_INCREMENT, {from: userAddress, value: 100000}); // 100000:1 FEI/ETH with 10k liquidity
+          await this.cowrie.mint(this.pair.address, 10000000000, {from: minterAddress});
+          await this.pair.set(100000, 10000000000, LIQUIDITY_INCREMENT, {from: userAddress, value: 100000}); // 100000:1 COWRIE/ETH with 10k liquidity
           await this.pcvDeposit.deposit(100000, {value: 100000}); // deposit LP
-          await this.fei.mint(this.pcvController.address, 50000000, {from: minterAddress}); // seed Fei to burn
+          await this.cowrie.mint(this.pcvController.address, 50000000, {from: minterAddress}); // seed Cowrie to burn
           await this.pcvController.forceReweight({from: governorAddress});
         });
 
@@ -135,8 +135,8 @@ describe('EthUniswapPCVController', function () {
           expect(await balance.current(this.pcvController.address)).to.be.bignumber.equal(new BN(0));
         });
 
-        it('controller has no FEI', async function() {
-          expect(await this.fei.balanceOf(this.pcvController.address)).to.be.bignumber.equal(new BN(0));
+        it('controller has no COWRIE', async function() {
+          expect(await this.cowrie.balanceOf(this.pcvController.address)).to.be.bignumber.equal(new BN(0));
         });
       });
     });
@@ -159,7 +159,7 @@ describe('EthUniswapPCVController', function () {
 
     describe('Not at incentive parity', function () {
       it('reverts', async function() {
-        await this.pair.set(100000, 51000000, LIQUIDITY_INCREMENT, {from: userAddress, value: 100000}); // 510:1 FEI/ETH with 10k liquidity
+        await this.pair.set(100000, 51000000, LIQUIDITY_INCREMENT, {from: userAddress, value: 100000}); // 510:1 COWRIE/ETH with 10k liquidity
         expect(await this.pcvController.reweightEligible()).to.be.equal(false);
         await expectRevert(this.pcvController.reweight(), "EthUniswapPCVController: Not at incentive parity or not at min distance");
       })
@@ -167,7 +167,7 @@ describe('EthUniswapPCVController', function () {
 
     describe('Not at min distance', function () {
       it('reverts', async function() {
-        await this.pair.set(100000, 50400000, LIQUIDITY_INCREMENT, {from: userAddress, value: 100000}); // 504:1 FEI/ETH with 10k liquidity
+        await this.pair.set(100000, 50400000, LIQUIDITY_INCREMENT, {from: userAddress, value: 100000}); // 504:1 COWRIE/ETH with 10k liquidity
         await this.incentive.setIncentiveParity(true);
         expect(await this.pcvController.reweightEligible()).to.be.equal(false);
         await expectRevert(this.pcvController.reweight(), "EthUniswapPCVController: Not at incentive parity or not at min distance");
@@ -176,7 +176,7 @@ describe('EthUniswapPCVController', function () {
 
     describe('No incentive for caller if controller not minter', function() {
         beforeEach(async function() {
-          await this.pair.set(100000, 51000000, LIQUIDITY_INCREMENT, {from: userAddress, value: 100000}); // 510:1 FEI/ETH with 10k liquidity
+          await this.pair.set(100000, 51000000, LIQUIDITY_INCREMENT, {from: userAddress, value: 100000}); // 510:1 COWRIE/ETH with 10k liquidity
           await this.pcvDeposit.deposit(100000, {value: 100000}); // deposit LP
           await this.incentive.setIncentiveParity(true);
           expect(await this.pcvController.reweightEligible()).to.be.equal(true);
@@ -190,14 +190,14 @@ describe('EthUniswapPCVController', function () {
           expect(await this.pcvDeposit.totalValue()).to.be.bignumber.equal(new BN(99003));
           expect(await balance.current(this.pcvController.address)).to.be.bignumber.equal(new BN(0));
         });
-        it('user FEI balance is 0', async function() {
-          expect(await this.fei.balanceOf(userAddress)).to.be.bignumber.equal(new BN(0));
+        it('user COWRIE balance is 0', async function() {
+          expect(await this.cowrie.balanceOf(userAddress)).to.be.bignumber.equal(new BN(0));
         });
     });
 
     describe('Incentive for caller if controller is a minter', function() {
         beforeEach(async function() {
-          await this.pair.set(100000, 51000000, LIQUIDITY_INCREMENT, {from: userAddress, value: 100000}); // 490:1 FEI/ETH with 10k liquidity
+          await this.pair.set(100000, 51000000, LIQUIDITY_INCREMENT, {from: userAddress, value: 100000}); // 490:1 COWRIE/ETH with 10k liquidity
           await this.pcvDeposit.deposit(100000, {value: 100000}); // deposit LP
           await this.incentive.setIncentiveParity(true);     
           await this.core.grantMinter(this.pcvController.address, {from: governorAddress});     
@@ -212,8 +212,8 @@ describe('EthUniswapPCVController', function () {
           expect(await this.pcvDeposit.totalValue()).to.be.bignumber.equal(new BN(99003));
           expect(await balance.current(this.pcvController.address)).to.be.bignumber.equal(new BN(0));
         });
-        it('user FEI balance updates', async function() {
-          expect(await this.fei.balanceOf(userAddress)).to.be.bignumber.equal(new BN("100000000000000000000"));
+        it('user COWRIE balance updates', async function() {
+          expect(await this.cowrie.balanceOf(userAddress)).to.be.bignumber.equal(new BN("100000000000000000000"));
         });
     });
   });
@@ -277,7 +277,7 @@ describe('EthUniswapPCVController', function () {
 
     describe('Pair', function() {
       it('Governor set succeeds', async function() {
-        let pair2 = await MockPair.new(this.token.address, this.fei.address);
+        let pair2 = await MockPair.new(this.token.address, this.cowrie.address);
         await this.pcvController.setPair(pair2.address, {from: governorAddress});
         expect(await this.pcvController.pair()).to.be.equal(pair2.address);
       });
@@ -289,7 +289,7 @@ describe('EthUniswapPCVController', function () {
 
     describe('Incentive Contract', function() {
       it('updates automatically', async function() {
-        await this.fei.setIncentiveContract(this.pair.address, userAddress, {from: governorAddress});
+        await this.cowrie.setIncentiveContract(this.pair.address, userAddress, {from: governorAddress});
         expect(await this.pcvController.incentiveContract()).to.be.equal(userAddress);
       });
     });

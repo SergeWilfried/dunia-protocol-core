@@ -5,12 +5,12 @@ import "./IPCVDeposit.sol";
 import "../refs/UniRef.sol";
 
 /// @title abstract implementation for Uniswap LP PCV Deposit
-/// @author Fei Protocol
+/// @author Cowrie Protocol
 abstract contract UniswapPCVDeposit is IPCVDeposit, UniRef {
     using Decimal for Decimal.D256;
 
     /// @notice Uniswap PCV Deposit constructor
-    /// @param _core Fei Core for reference
+    /// @param _core Cowrie Core for reference
     /// @param _pair Uniswap Pair to deposit to
     /// @param _router Uniswap Router
     /// @param _oracle oracle for reference

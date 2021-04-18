@@ -11,32 +11,32 @@
     Purchase
       Paused
         ✓ reverts (149ms)
-      Incorrect ETH sent
+      Incorrect  CELO sent
         ✓ Too little ETH (60ms)
         ✓ Too much ETH (77ms)
-      Correct ETH sent
+      Correct  CELO sent
         Invalid Oracle
           ✓ reverts (132ms)
         Pre Scale
-          ✓ correct FEI sent (114ms)
+          ✓ correct COWRIE sent (114ms)
           ✓ totalPurchased (126ms)
           ✓ not at Scale (132ms)
           ✓ current price (248ms)
           ✓ total PCV held (121ms)
           Second Purchase
-            ✓ correct FEI sent (88ms)
+            ✓ correct COWRIE sent (88ms)
             ✓ totalPurchased (66ms)
             ✓ not at Scale (102ms)
             ✓ current price (52ms)
             ✓ total PCV held (77ms)
           Purchase To
-            ✓ correct FEI sent (154ms)
+            ✓ correct COWRIE sent (154ms)
             ✓ totalPurchased (94ms)
             ✓ not at Scale (60ms)
             ✓ current price (132ms)
             ✓ total PCV held (106ms)
           Oracle Price Change
-            ✓ correct FEI sent (131ms)
+            ✓ correct COWRIE sent (131ms)
             ✓ totalPurchased (127ms)
             ✓ not at Scale (134ms)
             ✓ current price (145ms)
@@ -45,25 +45,25 @@
           ✓ registers scale cross (204ms)
           ✓ Correct current price (129ms)
         Crossing Scale
-          ✓ correct FEI sent (106ms)
+          ✓ correct COWRIE sent (106ms)
           ✓ totalPurchased (138ms)
           ✓ At Scale (108ms)
           ✓ current price (94ms)
           ✓ total PCV held (96ms)
           Post Scale
-            ✓ correct FEI sent (78ms)
+            ✓ correct COWRIE sent (78ms)
             ✓ totalPurchased (69ms)
             ✓ at Scale (115ms)
             ✓ current price (108ms)
             ✓ total PCV held (103ms)
           Buffer Change
-            ✓ correct FEI sent (153ms)
+            ✓ correct COWRIE sent (153ms)
             ✓ totalPurchased (110ms)
             ✓ at Scale (84ms)
             ✓ current price (96ms)
             ✓ total PCV held (84ms)
           Oracle Price Change
-            ✓ correct FEI sent (82ms)
+            ✓ correct COWRIE sent (82ms)
             ✓ totalPurchased (77ms)
             ✓ at Scale (46ms)
             ✓ current price (78ms)
@@ -128,14 +128,14 @@
         ✓ Non-governor reverts (119ms)
 
   Core
-    Allocate Tribe
+    Allocate Dunia
       ✓ updates (176ms)
       ✓ not enough reverts (144ms)
       ✓ non governor reverts (87ms)
-    Fei Update
+    Cowrie Update
       ✓ updates (183ms)
       ✓ non governor reverts (56ms)
-    Tribe Update
+    Dunia Update
       ✓ updates (122ms)
       ✓ non governor reverts (73ms)
     Genesis
@@ -266,7 +266,7 @@
 
   TimelockedDelegator
     Init
-      ✓ tribe (91ms)
+      ✓ dunia (91ms)
       ✓ totalDelegated (38ms)
       ✓ totalToken (61ms)
     Release
@@ -293,9 +293,9 @@
           ✓ releases tokens (126ms)
           ✓ updates released amounts (159ms)
     Delegation
-      Not enough Tribe
+      Not enough Dunia
         ✓ reverts (106ms)
-      Enough Tribe
+      Enough Dunia
         Single Delegation
           ✓ updates balances (177ms)
           ✓ updates delegated amount (99ms)
@@ -591,7 +591,7 @@
   EthUniswapPCVController
     Sole LP
       ✓ pcvDeposit gets all ETH (151ms)
-      ✓ controller has no FEI (129ms)
+      ✓ controller has no COWRIE (129ms)
     With Other LP
       At peg
         ✓ reverts (184ms)
@@ -601,11 +601,11 @@
         Enough to reweight
           ✓ pair gets some ETH in swap (202ms)
           ✓ pcvDeposit gets remaining ETH (274ms)
-          ✓ controller has no FEI (147ms)
+          ✓ controller has no COWRIE (147ms)
         Not enough to reweight
           ✓ pair gets all withdrawn ETH in swap (150ms)
           ✓ pcvDeposit only keeps non-withdrawn ETH (191ms)
-          ✓ controller has no FEI (202ms)
+          ✓ controller has no COWRIE (202ms)
     External Reweight
       Paused
         ✓ reverts (203ms)
@@ -618,11 +618,11 @@
       No incentive for caller if controller not minter
         ✓ pair gets some ETH in swap (196ms)
         ✓ pcvDeposit gets remaining ETH (188ms)
-        ✓ user FEI balance is 0 (223ms)
+        ✓ user COWRIE balance is 0 (223ms)
       Incentive for caller if controller is a minter
         ✓ pair gets some ETH in swap (172ms)
         ✓ pcvDeposit gets remaining ETH (228ms)
-        ✓ user FEI balance updates (215ms)
+        ✓ user COWRIE balance updates (215ms)
     Access
       Force Reweight
         ✓ Non-governor call fails (77ms)
@@ -661,22 +661,22 @@
           ✓ liquidityOwned (136ms)
           ✓ pair reserves (307ms)
           ✓ totalValue (233ms)
-          ✓ no fei held (108ms)
+          ✓ no cowrie held (108ms)
         With existing liquidity
           ✓ liquidityOwned (148ms)
           ✓ pair reserves (182ms)
           ✓ totalValue (155ms)
-          ✓ no fei held (161ms)
-        Transfers held ETH and burns FEI
+          ✓ no cowrie held (161ms)
+        Transfers held ETH and burns COWRIE
           ✓ liquidityOwned (133ms)
           ✓ pair reserves (233ms)
           ✓ totalValue (310ms)
-          ✓ no fei held (195ms)
+          ✓ no cowrie held (195ms)
         After oracle price move
           ✓ liquidityOwned (90ms)
           ✓ pair reserves (294ms)
           ✓ totalValue (120ms)
-          ✓ no fei held (187ms)
+          ✓ no cowrie held (187ms)
         Incorrect ETH amount
           ✓ reverts (214ms)
     Withdraw
@@ -688,12 +688,12 @@
       With Balance
         Partial
           ✓ user balance updates (47ms)
-          ✓ no fei held (172ms)
+          ✓ no cowrie held (172ms)
           ✓ pair balances update (347ms)
           ✓ liquidityOwned (156ms)
         Total
           ✓ user balance updates (43ms)
-          ✓ no fei held (125ms)
+          ✓ no cowrie held (125ms)
           ✓ liquidityOwned (110ms)
           ✓ pair balances update (194ms)
     Access
@@ -701,7 +701,7 @@
         ✓ Governor set succeeds (299ms)
         ✓ Non-governor set reverts (117ms)
 
-  FeiRouter
+  CowrieRouter
     Buy
       Mint
         Not enough mint
@@ -739,7 +739,7 @@
         Acceptable
           ✓ succeeds (685ms)
 
-  FeiRewardsDistributor
+  DuniaRewardsDistributor
     Init
       ✓ paused (47ms)
       ✓ stakingContract (118ms)
@@ -818,7 +818,7 @@
           second
             ✓ reverts (230ms)
 
-  FeiStakingRewards
+  DuniaStakingRewards
     Init
       ✓ rewardsToken (65ms)
       ✓ current price (76ms)
@@ -903,23 +903,23 @@
         ✓ updated balances (215ms)
         ✓ updates rates (164ms)
 
-  Fei
+  Cowrie
     mint
       Paused
         ✓ reverts (283ms)
       not from minter
         ✓ reverts (76ms)
       from minter
-        ✓ mints new Fei tokens (45ms)
+        ✓ mints new Cowrie tokens (45ms)
     burn
       Paused
         ✓ reverts (128ms)
       not from burner
         ✓ reverts (58ms)
       from burner to user with sufficient balance
-        ✓ burn Fei tokens (119ms)
+        ✓ burn Cowrie tokens (119ms)
       from burner to user without sufficient balance
-        ✓ burn Fei tokens (63ms)
+        ✓ burn Cowrie tokens (63ms)
     incentive contracts
       ✓ incentive contract registered (128ms)
       via transfer
@@ -1097,7 +1097,7 @@
           ✓ reverts (215ms)
     Access
       Incentivize
-        ✓ Non-Fei call reverts (135ms)
+        ✓ Non-Cowrie call reverts (135ms)
       Growth Rate
         ✓ Governor set succeeds (130ms)
         ✓ Non-governor set reverts (96ms)

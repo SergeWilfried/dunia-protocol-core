@@ -6,13 +6,13 @@ description: A reference to an oracle contract
 
 ## Contract
 
-[OracleRef.sol](https://github.com/fei-protocol/fei-protocol-core/blob/master/contracts/refs/OracleRef.sol) implements [IOracleRef](https://github.com/fei-protocol/fei-protocol-core/blob/master/contracts/refs/IOracleRef.sol), [CoreRef](https://github.com/fei-protocol/fei-protocol-core/blob/master/contracts/refs/CoreRef.sol)
+[OracleRef.sol](https://github.com/cowrie-protocol/cowrie-protocol-core/blob/master/contracts/refs/OracleRef.sol) implements [IOracleRef](https://github.com/cowrie-protocol/cowrie-protocol-core/blob/master/contracts/refs/IOracleRef.sol), [CoreRef](https://github.com/cowrie-protocol/cowrie-protocol-core/blob/master/contracts/refs/CoreRef.sol)
 
 ## Description
 
 OracleRef is an abstract contract which references an oracle. It defines some basic utilities useful for contracts referencing an oracle.
 
-The contract allows for updating or reading from the oracle. The oracle price is reported as FEI per X where X is some other asset like ETH, USDC, or USD depending on the oracle needs.
+The contract allows for updating or reading from the oracle. The oracle price is reported as COWRIE per X where X is some other asset like ETH, USDC, or USD depending on the oracle needs.
 
 It allows Governor⚖️to change the referenced Oracle
 
@@ -57,7 +57,7 @@ function invert(Decimal.D256 calldata price)
     returns (Decimal.D256 memory);
 ```
 
-Inverts a `price` to be reported in the reverse direction. When applied to `peg` it reports X per FEI wher X is some underlying asset.
+Inverts a `price` to be reported in the reverse direction. When applied to `peg` it reports X per COWRIE wher X is some underlying asset.
 
 ## Public State-Changing Functions
 

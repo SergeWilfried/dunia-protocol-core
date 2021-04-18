@@ -5,7 +5,7 @@ import "../external/SafeMathCopy.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 /// @title abstract contract for splitting PCV into different deposits
-/// @author Fei Protocol
+/// @author Cowrie Protocol
 abstract contract PCVSplitter {
     using SafeMathCopy for uint256;
 

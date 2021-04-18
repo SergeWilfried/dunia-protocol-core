@@ -6,7 +6,7 @@ description: A timer utility for keeping track of elapsed time within a window
 
 ## Contract
 
-[Timed.sol](https://github.com/fei-protocol/fei-protocol-core/blob/master/contracts/utils/Timed.sol)
+[Timed.sol](https://github.com/cowrie-protocol/cowrie-protocol-core/blob/master/contracts/utils/Timed.sol)
 
 ## Description
 

@@ -39,16 +39,16 @@ File                          |  % Stmts | % Branch |  % Funcs |  % Lines |Uncov
   OracleRef.sol               |      100 |      100 |      100 |      100 |                |
   UniRef.sol                  |      100 |      100 |      100 |      100 |                |
  router/                      |      100 |      100 |      100 |      100 |                |
-  FeiRouter.sol               |      100 |      100 |      100 |      100 |                |
-  IFeiRouter.sol              |      100 |      100 |      100 |      100 |                |
+  CowrieRouter.sol               |      100 |      100 |      100 |      100 |                |
+  ICowrie.sol              |      100 |      100 |      100 |      100 |                |
  staking/                     |      100 |     87.5 |      100 |      100 |                |
-  FeiRewardsDistributor.sol   |      100 |     87.5 |      100 |      100 |                |
-  FeiStakingRewards.sol       |      100 |      100 |      100 |      100 |                |
+  DuniaRewardsDistributor.sol   |      100 |     87.5 |      100 |      100 |                |
+  DuniaStakingRewards.sol       |      100 |      100 |      100 |      100 |                |
   IRewardsDistributor.sol     |      100 |      100 |      100 |      100 |                |
   IStakingRewards.sol         |      100 |      100 |      100 |      100 |                |
  token/                       |    95.49 |    91.38 |    96.43 |    95.52 |                |
-  Fei.sol                     |    82.76 |    66.67 |     87.5 |    83.33 |... 185,186,190 |
-  IFei.sol                    |      100 |      100 |      100 |      100 |                |
+  Cowrie.sol                     |    82.76 |    66.67 |     87.5 |    83.33 |... 185,186,190 |
+  ICowrie.sol                    |      100 |      100 |      100 |      100 |                |
   IIncentive.sol              |      100 |      100 |      100 |      100 |                |
   IUniswapIncentive.sol       |      100 |      100 |      100 |      100 |                |
   UniswapIncentive.sol        |    99.04 |    97.83 |      100 |    99.04 |            346 |

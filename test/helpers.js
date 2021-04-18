@@ -16,18 +16,18 @@ const Core = contract.fromArtifact('Core');
 const EthBondingCurve = contract.fromArtifact('EthBondingCurve');
 const EthUniswapPCVController = contract.fromArtifact('EthUniswapPCVController');
 const EthUniswapPCVDeposit = contract.fromArtifact('EthUniswapPCVDeposit');
-const Fei = contract.fromArtifact('Fei');
-const FeiRouter = contract.fromArtifact('FeiRouter');
+const Cowrie = contract.fromArtifact('Cowrie');
+const CowrieRouter = contract.fromArtifact('CowrieRouter');
 const ForceEth = contract.fromArtifact('ForceEth');
 const GenesisGroup = contract.fromArtifact('GenesisGroup');
 const IDO = contract.fromArtifact('IDO');
 const Roots = contract.fromArtifact('RootsWrapper');
 const TimelockedDelegator = contract.fromArtifact('TimelockedDelegator');
-const Tribe = contract.fromArtifact('Tribe');
+const Dunia = contract.fromArtifact('Dunia');
 const UniswapIncentive = contract.fromArtifact('UniswapIncentive');
 const UniswapOracle = contract.fromArtifact('UniswapOracle');
-const FeiStakingRewards = contract.fromArtifact('FeiStakingRewards');
-const FeiRewardsDistributor = contract.fromArtifact('FeiRewardsDistributor');
+const DuniaStakingRewards = contract.fromArtifact('DuniaStakingRewards');
+const DuniaRewardsDistributor = contract.fromArtifact('DuniaRewardsDistributor');
 
 
 const MockBondingCurve = contract.fromArtifact('MockBondingCurve');
@@ -107,16 +107,16 @@ module.exports = {
     EthBondingCurve,
     EthUniswapPCVController,
     EthUniswapPCVDeposit,
-    Fei,
-    FeiRewardsDistributor,
-    FeiStakingRewards,
-    FeiRouter,
+    Cowrie,
+    DuniaRewardsDistributor,
+    DuniaStakingRewards,
+    CowrieRouter,
     ForceEth,
     GenesisGroup,
     Roots,
     IDO,
     TimelockedDelegator,
-    Tribe,
+    Dunia,
     UniswapIncentive,
     UniswapOracle,
     // mock contracts

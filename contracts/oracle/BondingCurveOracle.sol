@@ -6,7 +6,7 @@ import "../refs/CoreRef.sol";
 import "../utils/Timed.sol";
 
 /// @title Bonding curve oracle
-/// @author Fei Protocol
+/// @author Cowrie Protocol
 /// @notice peg is to be the current bonding curve price if pre-Scale
 /// @notice includes "thawing" on the initial purchase price at genesis. Time weights price from initial to true peg over a window.
 contract BondingCurveOracle is IBondingCurveOracle, CoreRef, Timed {
@@ -21,7 +21,7 @@ contract BondingCurveOracle is IBondingCurveOracle, CoreRef, Timed {
     Decimal.D256 internal _initialUSDPrice;
 
     /// @notice BondingCurveOracle constructor
-    /// @param _core Fei Core to reference
+    /// @param _core Cowrie Core to reference
     /// @param _oracle Uniswap Oracle to report from
     /// @param _bondingCurve Bonding curve to report from
     /// @param _duration price thawing duration
@@ -61,13 +61,13 @@ contract BondingCurveOracle is IBondingCurveOracle, CoreRef, Timed {
         return (_thaw(peg), valid);
     }
 
-    /// @notice the initial price denominated in USD per FEI to thaw from
+    /// @notice the initial price denominated in USD per COWRIE to thaw from
     function initialUSDPrice() external view override returns (Decimal.D256 memory) {
         return _initialUSDPrice;
     }
 
     /// @notice initializes the oracle with an initial peg price
-    /// @param initPrice a price denominated in USD per FEI
+    /// @param initPrice a price denominated in USD per COWRIE
     /// @dev divides the initial peg by the uniswap oracle price to get initialUSDPrice. And kicks off thawing period
     function init(Decimal.D256 memory initPrice)
         public
@@ -102,7 +102,7 @@ contract BondingCurveOracle is IBondingCurveOracle, CoreRef, Timed {
         Decimal.D256 memory weightedPrice =
             _initialUSDPrice.mul(remaining).add(price.mul(elapsed)).div(duration);
 
-        // divide from peg to return a peg FEI per X instead of a price USD per FEI
+        // divide from peg to return a peg COWRIE per X instead of a price USD per COWRIE
         return uniswapPeg.div(weightedPrice);
     }
 

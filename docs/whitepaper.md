@@ -1,14 +1,14 @@
 ---
-description: The Fei Protocol white paper
+description: The Cowrie Protocol white paper
 ---
 
 # White Paper
 
-The Fei Protocol white paper is a static document explaining the concept and inspiration for v1 of the protocol.
+The Cowrie Protocol white paper is a static document explaining the concept and inspiration for v1 of the protocol.
 
 White Paper:
 
-{% embed url="https://fei.money/whitepaper" caption="" %}
+{% embed url="https://cowrie.money/whitepaper" caption="" %}
 
 Changes to the protocol functionality are chronicled in the changelog:
 

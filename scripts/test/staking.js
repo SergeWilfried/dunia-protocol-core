@@ -4,15 +4,15 @@ const { MAX_UINT256 } = require("@openzeppelin/test-helpers/src/constants");
 const CoreOrchestrator = artifacts.require("CoreOrchestrator");
 const IDO = artifacts.require("IDO");
 const Core = artifacts.require("Core");
-const Tribe = artifacts.require("Tribe");
+const Dunia = artifacts.require("Dunia");
 const IUniswapV2Pair = artifacts.require("IUniswapV2Pair");
-const FeiStakingRewards = artifacts.require("FeiStakingRewards");
-const FeiRewardsDistributor = artifacts.require("FeiRewardsDistributor");
+const DuniaStakingRewards = artifacts.require("DuniaStakingRewards");
+const DuniaRewardsDistributor = artifacts.require("DuniaRewardsDistributor");
 
 // Assumes the following:
 // Post Genesis
 // Staking uninitialized
-// None of the FEI/TRIBE LP has been redeemed and accounts[0] is the admin
+// None of the COWRIE/TRIBE LP has been redeemed and accounts[0] is the admin
 
 // 10% of TRIBE for rewards
 // 6 min reward window
@@ -22,22 +22,22 @@ module.exports = async function(callback) {
   let accounts = await web3.eth.getAccounts();
   let co = await CoreOrchestrator.deployed();
   let core = await Core.at(await co.core());
-  let tribe = await Tribe.at(await core.tribe());
+  let dunia = await Dunia.at(await core.dunia());
   let ido = await IDO.at(await co.ido());
   let pair = await IUniswapV2Pair.at(await ido.pair());
 
   console.log('Init Staking');
   await co.initStaking();
 
-  let distributor = await FeiRewardsDistributor.at(await co.feiRewardsDistributor());
-  let staking = await FeiStakingRewards.at(await co.feiStakingRewards());
+  let distributor = await DuniaRewardsDistributor.at(await co.duniaRewardsDistributor());
+  let staking = await DuniaStakingRewards.at(await co.duniaStakingRewards());
 
-  // Reset TRIBE Tribe
+  // Reset TRIBE Dunia
   console.log('Reset TRIBE');
 
-  await tribe.transfer(await core.address, await tribe.balanceOf(accounts[0]), {from: accounts[0]});
-  await tribe.transfer(await core.address, await tribe.balanceOf(accounts[1]), {from: accounts[1]});
-  await tribe.transfer(await core.address, await tribe.balanceOf(accounts[2]), {from: accounts[2]});
+  await dunia.transfer(await core.address, await dunia.balanceOf(accounts[0]), {from: accounts[0]});
+  await dunia.transfer(await core.address, await dunia.balanceOf(accounts[1]), {from: accounts[1]});
+  await dunia.transfer(await core.address, await dunia.balanceOf(accounts[2]), {from: accounts[2]});
 
   // Redeem pairs
   console.log('Redeem LP');
@@ -114,11 +114,11 @@ module.exports = async function(callback) {
   await staking.exit({from: accounts[1]});
   await staking.exit({from: accounts[2]});
 
-  let rewardsA = await tribe.balanceOf(accounts[0]);
-  let rewardsB = await tribe.balanceOf(accounts[1]);
-  let rewardsC = await tribe.balanceOf(accounts[2]);
-  let distributorLeft = await tribe.balanceOf(distributor.address);
-  let stakingLeft = await tribe.balanceOf(staking.address);
+  let rewardsA = await dunia.balanceOf(accounts[0]);
+  let rewardsB = await dunia.balanceOf(accounts[1]);
+  let rewardsC = await dunia.balanceOf(accounts[2]);
+  let distributorLeft = await dunia.balanceOf(distributor.address);
+  let stakingLeft = await dunia.balanceOf(staking.address);
 
   console.log(`Reward Balances: A=${stringify(rewardsA)}, B=${stringify(rewardsB)}, C=${stringify(rewardsC)}, dist=${stringify(distributorLeft)}, stk=${stringify(stakingLeft)}`);
 

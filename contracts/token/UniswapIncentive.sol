@@ -7,7 +7,7 @@ import "../utils/SafeMath32.sol";
 import "../refs/UniRef.sol";
 
 /// @title Uniswap trading incentive contract
-/// @author Fei Protocol
+/// @author Cowrie Protocol
 /// @dev incentives are only appplied if the contract is appointed as a Minter or Burner, otherwise skipped
 contract UniswapIncentive is IUniswapIncentive, UniRef {
     using Decimal for Decimal.D256;
@@ -29,7 +29,7 @@ contract UniswapIncentive is IUniswapIncentive, UniRef {
     mapping(address => bool) private _exempt;
 
     /// @notice UniswapIncentive constructor
-    /// @param _core Fei Core to reference
+    /// @param _core Cowrie Core to reference
     /// @param _oracle Oracle to reference
     /// @param _pair Uniswap Pair to incentivize
     /// @param _router Uniswap Router
@@ -152,12 +152,12 @@ contract UniswapIncentive is IUniswapIncentive, UniRef {
     }
 
     /// @notice get the incentive amount of a buy transfer
-    /// @param amount the FEI size of the transfer
-    /// @return incentive the FEI size of the mint incentive
+    /// @param amount the COWRIE size of the transfer
+    /// @return incentive the COWRIE size of the mint incentive
     /// @return weight the time weight of thhe incentive
     /// @return _initialDeviation the Decimal deviation from peg before a transfer
     /// @return _finalDeviation the Decimal deviation from peg after a transfer
-    /// @dev calculated based on a hypothetical buy, applies to any ERC20 FEI transfer from the pool
+    /// @dev calculated based on a hypothetical buy, applies to any ERC20 COWRIE transfer from the pool
     function getBuyIncentive(uint256 amount)
         public
         view
@@ -170,7 +170,7 @@ contract UniswapIncentive is IUniswapIncentive, UniRef {
         )
     {
         int256 signedAmount = amount.toInt256();
-        // A buy withdraws FEI from uni so use negative amountIn
+        // A buy withdraws COWRIE from uni so use negative amountIn
         (
             Decimal.D256 memory initialDeviation, 
             Decimal.D256 memory finalDeviation, 
@@ -200,11 +200,11 @@ contract UniswapIncentive is IUniswapIncentive, UniRef {
     }
 
     /// @notice get the burn amount of a sell transfer
-    /// @param amount the FEI size of the transfer
-    /// @return penalty the FEI size of the burn incentive
+    /// @param amount the COWRIE size of the transfer
+    /// @return penalty the COWRIE size of the burn incentive
     /// @return _initialDeviation the Decimal deviation from peg before a transfer
     /// @return _finalDeviation the Decimal deviation from peg after a transfer
-    /// @dev calculated based on a hypothetical sell, applies to any ERC20 FEI transfer to the pool
+    /// @dev calculated based on a hypothetical sell, applies to any ERC20 COWRIE transfer to the pool
     function getSellPenalty(uint256 amount)
         public
         view
@@ -283,7 +283,7 @@ contract UniswapIncentive is IUniswapIncentive, UniRef {
 
         _updateTimeWeight(initialDeviation, finalDeviation, weight);
         if (incentive != 0) {
-            fei().mint(target, incentive);
+            cowrie().mint(target, incentive);
         }
     }
 
@@ -306,7 +306,7 @@ contract UniswapIncentive is IUniswapIncentive, UniRef {
 
         if (penalty != 0) {
             require(penalty < amount, "UniswapIncentive: Burn exceeds trade size");
-            fei().burnFrom(address(pair), penalty); // burn from the recipient which is the pair
+            cowrie().burnFrom(address(pair), penalty); // burn from the recipient which is the pair
         }
     }
 

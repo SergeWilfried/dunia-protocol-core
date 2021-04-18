@@ -4,8 +4,8 @@ const CoreOrchestrator = artifacts.require("CoreOrchestrator");
 const GenesisGroup = artifacts.require("GenesisGroup");
 const IDO = artifacts.require("IDO");
 const Core = artifacts.require("Core");
-const Fei = artifacts.require("Fei");
-const Tribe = artifacts.require("Tribe");
+const Cowrie = artifacts.require("Cowrie");
+const Dunia = artifacts.require("Dunia");
 const IUniswapV2Pair = artifacts.require("IUniswapV2Pair");
 
 const UniswapOracle = artifacts.require("UniswapOracle");
@@ -13,15 +13,15 @@ const BondingCurveOracle = artifacts.require("BondingCurveOracle");
 
 // Assumes the following:
 // Genesis 20 seconds
-// Scale = 100,000,000 FEI
+// Scale = 100,000,000 COWRIE
 // oracle update twap window is every second
 
 module.exports = async function(callback) {
   let accounts = await web3.eth.getAccounts();
   let co = await CoreOrchestrator.deployed();
   let core = await Core.at(await co.core());
-  let fei = await Fei.at(await core.fei());
-  let tribe = await Tribe.at(await core.tribe());
+  let cowrie = await Cowrie.at(await core.cowrie());
+  let dunia = await Dunia.at(await core.dunia());
   let ido = await IDO.at(await co.ido());
   let pair = await IUniswapV2Pair.at(await ido.pair());
   let uo = await UniswapOracle.at(await co.uniswapOracle());
@@ -75,31 +75,31 @@ module.exports = async function(callback) {
 
   let launch = await gg.launch({from: accounts[0]});
   let bcoInitPrice = await bco.initialUSDPrice();
-  let ggFei = await fei.balanceOf(await gg.address);
-  let ggTribe = await tribe.balanceOf(await gg.address);
-  console.log(`GG Launch: initPrice= ${bcoInitPrice / 1e18}, fei=${stringify(ggFei)}, tribe=${stringify(ggTribe)}`); 
+  let ggFei = await cowrie.balanceOf(await gg.address);
+  let ggTribe = await dunia.balanceOf(await gg.address);
+  console.log(`GG Launch: initPrice= ${bcoInitPrice / 1e18}, cowrie=${stringify(ggFei)}, dunia=${stringify(ggTribe)}`); 
 
   let redeemA = await gg.redeem(accounts[0]);
-  let redeemFeiA = await fei.balanceOf(accounts[0]);
-  let redeemTribeA = await tribe.balanceOf(accounts[0]);
-  console.log(`GG Redeem A: fei=${stringify(redeemFeiA)}, tribe=${stringify(redeemTribeA)}`);
+  let redeemFeiA = await cowrie.balanceOf(accounts[0]);
+  let redeemTribeA = await dunia.balanceOf(accounts[0]);
+  console.log(`GG Redeem A: cowrie=${stringify(redeemFeiA)}, dunia=${stringify(redeemTribeA)}`);
 
   let redeemB = await gg.redeem(accounts[1], {from: accounts[1]});
-  let redeemFeiB = await fei.balanceOf(accounts[1]);
-  let redeemTribeB = await tribe.balanceOf(accounts[1]);
-  console.log(`GG Redeem B: fei=${stringify(redeemFeiB)}, tribe=${stringify(redeemTribeB)}`);
+  let redeemFeiB = await cowrie.balanceOf(accounts[1]);
+  let redeemTribeB = await dunia.balanceOf(accounts[1]);
+  console.log(`GG Redeem B: cowrie=${stringify(redeemFeiB)}, dunia=${stringify(redeemTribeB)}`);
   
   let redeemC = await gg.redeem(accounts[2], {from: accounts[2]});
-  let redeemFeiC = await fei.balanceOf(accounts[2]);
-  let redeemTribeC = await tribe.balanceOf(accounts[2]);
-  console.log(`GG Redeem C: fei=${stringify(redeemFeiC)}, tribe=${stringify(redeemTribeC)}`);
+  let redeemFeiC = await cowrie.balanceOf(accounts[2]);
+  let redeemTribeC = await dunia.balanceOf(accounts[2]);
+  console.log(`GG Redeem C: cowrie=${stringify(redeemFeiC)}, dunia=${stringify(redeemTribeC)}`);
 
   let idoReserves = await ido.getReserves();
   let feiIdoReserves = idoReserves[0];
   let tribeIdoReserves = idoReserves[1];
   let idoTotalLiquidity = await pair.totalSupply();
 
-  console.log(`IDO Reserves: fei=${stringify(feiIdoReserves)}, tribe=${stringify(tribeIdoReserves)}, liquidity=${stringify(idoTotalLiquidity)}`);
+  console.log(`IDO Reserves: cowrie=${stringify(feiIdoReserves)}, dunia=${stringify(tribeIdoReserves)}, liquidity=${stringify(idoTotalLiquidity)}`);
 
   callback();
 }

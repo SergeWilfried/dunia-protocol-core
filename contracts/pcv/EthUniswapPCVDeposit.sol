@@ -4,12 +4,12 @@ pragma experimental ABIEncoderV2;
 import "./UniswapPCVDeposit.sol";
 
 /// @title implementation for an ETH Uniswap LP PCV Deposit
-/// @author Fei Protocol
+/// @author Cowrie Protocol
 contract EthUniswapPCVDeposit is UniswapPCVDeposit {
     using Address for address payable;
 
     /// @notice ETH Uniswap PCV Deposit constructor
-    /// @param _core Fei Core for reference
+    /// @param _core Cowrie Core for reference
     /// @param _pair Uniswap Pair to deposit to
     /// @param _router Uniswap Router
     /// @param _oracle oracle for reference
@@ -36,7 +36,7 @@ contract EthUniswapPCVDeposit is UniswapPCVDeposit {
 
         _addLiquidity(ethAmount, feiAmount);
 
-        _burnFeiHeld(); // burn any FEI dust from LP
+        _burnFeiHeld(); // burn any COWRIE dust from LP
 
         emit Deposit(msg.sender, ethAmount);
     }
@@ -49,7 +49,7 @@ contract EthUniswapPCVDeposit is UniswapPCVDeposit {
         uint256 endOfTime = uint256(-1);
         (, uint256 amountWithdrawn) =
             router.removeLiquidityETH(
-                address(fei()),
+                address(cowrie()),
                 liquidity,
                 0,
                 0,
@@ -68,7 +68,7 @@ contract EthUniswapPCVDeposit is UniswapPCVDeposit {
 
         uint256 endOfTime = uint256(-1);
         router.addLiquidityETH{value: ethAmount}(
-            address(fei()),
+            address(cowrie()),
             feiAmount,
             0,
             0,

@@ -6,13 +6,13 @@ pragma experimental ABIEncoderV2;
 contract GovernorAlpha {
     /// @notice The name of this contract
     // solhint-disable-next-line const-name-snakecase
-    string public constant name = "Fei Governor Alpha";
+    string public constant name = "Cowrie Governor Alpha";
 
     /// @notice The number of votes in support of a proposal required in order for a quorum to be reached and for a vote to succeed
-    function quorumVotes() public pure returns (uint) { return 25000000e18; } // 25,000,000 = 2.5% of Tribe
+    function quorumVotes() public pure returns (uint) { return 25000000e18; } // 25,000,000 = 2.5% of Dunia
 
     /// @notice The number of votes required in order for a voter to become a proposer
-    function proposalThreshold() public pure returns (uint) { return 2500000e18; } // 2,500,000 = .25% of Tribe
+    function proposalThreshold() public pure returns (uint) { return 2500000e18; } // 2,500,000 = .25% of Dunia
 
     /// @notice The maximum number of actions that can be included in a proposal
     function proposalMaxOperations() public pure returns (uint) { return 10; } // 10 actions
@@ -23,11 +23,11 @@ contract GovernorAlpha {
     /// @notice The duration of voting on a proposal, in blocks
     function votingPeriod() public pure returns (uint) { return 10000; } // ~1.5 days in blocks (assuming 13s blocks)
 
-    /// @notice The address of the Fei Protocol Timelock
+    /// @notice The address of the Cowrie Protocol Timelock
     TimelockInterface public timelock;
 
-    /// @notice The address of the Fei governance token
-    TribeInterface public tribe;
+    /// @notice The address of the Cowrie governance token
+    TribeInterface public dunia;
 
     /// @notice The address of the Governor Guardian
     address public guardian;
@@ -132,12 +132,12 @@ contract GovernorAlpha {
 
     constructor(address timelock_, address tribe_, address guardian_) public {
         timelock = TimelockInterface(timelock_);
-        tribe = TribeInterface(tribe_);
+        dunia = TribeInterface(tribe_);
         guardian = guardian_;
     }
 
     function propose(address[] memory targets, uint[] memory values, string[] memory signatures, bytes[] memory calldatas, string memory description) public returns (uint) {
-        require(tribe.getPriorVotes(msg.sender, sub256(block.number, 1)) > proposalThreshold(), "GovernorAlpha: proposer votes below proposal threshold");
+        require(dunia.getPriorVotes(msg.sender, sub256(block.number, 1)) > proposalThreshold(), "GovernorAlpha: proposer votes below proposal threshold");
         require(targets.length == values.length && targets.length == signatures.length && targets.length == calldatas.length, "GovernorAlpha: proposal function information arity mismatch");
         require(targets.length != 0, "GovernorAlpha: must provide actions");
         require(targets.length <= proposalMaxOperations(), "GovernorAlpha: too many actions");
@@ -208,7 +208,7 @@ contract GovernorAlpha {
         require(state == ProposalState.Active || state == ProposalState.Pending, "GovernorAlpha: can only cancel Active or Pending Proposal");
 
         Proposal storage proposal = proposals[proposalId];
-        require(msg.sender == guardian || tribe.getPriorVotes(proposal.proposer, sub256(block.number, 1)) < proposalThreshold(), "GovernorAlpha: proposer above threshold");
+        require(msg.sender == guardian || dunia.getPriorVotes(proposal.proposer, sub256(block.number, 1)) < proposalThreshold(), "GovernorAlpha: proposer above threshold");
 
         proposal.canceled = true;
         for (uint i = 0; i < proposal.targets.length; i++) {
@@ -268,7 +268,7 @@ contract GovernorAlpha {
         Proposal storage proposal = proposals[proposalId];
         Receipt storage receipt = proposal.receipts[voter];
         require(receipt.hasVoted == false, "GovernorAlpha: voter already voted");
-        uint96 votes = tribe.getPriorVotes(voter, proposal.startBlock);
+        uint96 votes = dunia.getPriorVotes(voter, proposal.startBlock);
 
         if (support) {
             proposal.forVotes = add256(proposal.forVotes, votes);

@@ -1,12 +1,12 @@
 ---
-description: Results and reports of Fei Protocol audit engagements
+description: Results and reports of Cowrie Protocol audit engagements
 ---
 
 # Audits
 
 ## OpenZeppelin
 
-[OpenZeppelin](https://openzeppelin.com/security-audits/) conducted Fei Protocol's primary audit. The audit was performed by 3 auditors over 5 weeks. The final outcome of the report: [openzeppelin\_audit](https://blog.openzeppelin.com/fei-protocol-audit/)
+[OpenZeppelin](https://openzeppelin.com/security-audits/) conducted Cowrie Protocol's primary audit. The audit was performed by 3 auditors over 5 weeks. The final outcome of the report: [openzeppelin\_audit](https://blog.openzeppelin.com/cowrie-protocol-audit/)
 
 ## ConsenSys Diligence
 

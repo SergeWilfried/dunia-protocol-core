@@ -1,22 +1,22 @@
     pragma solidity ^0.6.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "../staking/FeiRewardsDistributor.sol";
-import "../staking/FeiStakingRewards.sol";
+import "../staking/DuniaRewardsDistributor.sol";
+import "../staking/DuniaStakingRewards.sol";
 import "./IOrchestrator.sol";
 
 contract StakingOrchestrator is IStakingOrchestrator, Ownable {
     function init(
         address core,
-        address tribeFeiPair,
-        address tribe,
+        address duniaCowriePair,
+        address dunia,
         uint stakingDuration,
         uint dripFrequency,
         uint incentiveAmount
     ) public override onlyOwner returns (address stakingRewards, address distributor) {
 
         distributor = address(
-            new FeiRewardsDistributor(
+            new DuniaRewardsDistributor(
                 core,
                 address(0), // to be set by governor
                 stakingDuration,
@@ -26,10 +26,10 @@ contract StakingOrchestrator is IStakingOrchestrator, Ownable {
         );
 
         stakingRewards = address(
-            new FeiStakingRewards(
+            new DuniaStakingRewards(
                 distributor,
-                tribe,
-                tribeFeiPair,
+                dunia,
+                duniaCowriePair,
                 dripFrequency
             )
         );

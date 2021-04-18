@@ -4,7 +4,7 @@ pragma experimental ABIEncoderV2;
 import "../core/ICore.sol";
 
 /// @title CoreRef interface
-/// @author Fei Protocol
+/// @author Cowrie Protocol
 interface ICoreRef {
     // ----------- Events -----------
 
@@ -22,9 +22,9 @@ interface ICoreRef {
 
     function core() external view returns (ICore);
 
-    function fei() external view returns (IFei);
+    function cowrie() external view returns (ICowrie);
 
-    function tribe() external view returns (IERC20);
+    function dunia() external view returns (IERC20);
 
     function feiBalance() external view returns (uint256);
 

@@ -4,12 +4,12 @@ pragma experimental ABIEncoderV2;
 import "@openzeppelin/contracts/token/ERC20/ERC20Burnable.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "./IIncentive.sol";
-import "./IFei.sol";
+import "./ICowrie.sol";
 import "../refs/CoreRef.sol";
 
-/// @title FEI stablecoin
-/// @author Fei Protocol
-contract Fei is IFei, ERC20Burnable, CoreRef {
+/// @title COWRIE stablecoin
+/// @author Cowrie Protocol
+contract Cowrie is ICowrie, ERC20Burnable, CoreRef {
     
     /// @notice get associated incentive contract, 0 address if N/A
     mapping(address => address) public override incentiveContract;
@@ -21,9 +21,9 @@ contract Fei is IFei, ERC20Burnable, CoreRef {
         0x6e71edae12b1b97f4d1f60370fef10105fa2faae0126114a169c64845d6126c9;
     mapping(address => uint256) public nonces;
 
-    /// @notice Fei token constructor
-    /// @param core Fei Core address to reference
-    constructor(address core) public ERC20("Fei USD", "FEI") CoreRef(core) {
+    /// @notice Cowrie token constructor
+    /// @param core Cowrie Core address to reference
+    constructor(address core) public ERC20("Cowrie", "COW") CoreRef(core) {
         uint256 chainId;
         // solhint-disable-next-line no-inline-assembly
         assembly {
@@ -53,7 +53,7 @@ contract Fei is IFei, ERC20Burnable, CoreRef {
         emit IncentiveContractUpdate(account, incentive);
     }
 
-    /// @notice mint FEI tokens
+    /// @notice mint COWRIE tokens
     /// @param account the account to mint to
     /// @param amount the amount to mint
     function mint(address account, uint256 amount)
@@ -66,19 +66,19 @@ contract Fei is IFei, ERC20Burnable, CoreRef {
         emit Minting(account, msg.sender, amount);
     }
 
-    /// @notice burn FEI tokens from caller
+    /// @notice burn COWRIE tokens from caller
     /// @param amount the amount to burn
-    function burn(uint256 amount) public override(IFei, ERC20Burnable) {
+    function burn(uint256 amount) public override(ICowrie, ERC20Burnable) {
         super.burn(amount);
         emit Burning(msg.sender, msg.sender, amount);
     }
 
-    /// @notice burn FEI tokens from specified account
+    /// @notice burn COWRIE tokens from specified account
     /// @param account the account to burn from
     /// @param amount the amount to burn
     function burnFrom(address account, uint256 amount)
         public
-        override(IFei, ERC20Burnable)
+        override(ICowrie, ERC20Burnable)
         onlyBurner
         whenNotPaused
     {
@@ -149,8 +149,8 @@ contract Fei is IFei, ERC20Burnable, CoreRef {
         }
     }
 
-    /// @notice permit spending of FEI
-    /// @param owner the FEI holder
+    /// @notice permit spending of COWRIE
+    /// @param owner the COWRIE holder
     /// @param spender the approved operator
     /// @param value the amount approved
     /// @param deadline the deadline after which the approval is no longer valid
@@ -164,7 +164,7 @@ contract Fei is IFei, ERC20Burnable, CoreRef {
         bytes32 s
     ) external override {
         // solhint-disable-next-line not-rely-on-time
-        require(deadline >= block.timestamp, "Fei: EXPIRED");
+        require(deadline >= block.timestamp, "Cowrie: EXPIRED");
         bytes32 digest =
             keccak256(
                 abi.encodePacked(
@@ -185,7 +185,7 @@ contract Fei is IFei, ERC20Burnable, CoreRef {
         address recoveredAddress = ecrecover(digest, v, r, s);
         require(
             recoveredAddress != address(0) && recoveredAddress == owner,
-            "Fei: INVALID_SIGNATURE"
+            "Cowrie: INVALID_SIGNATURE"
         );
         _approve(owner, spender, value);
     }

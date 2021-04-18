@@ -2,15 +2,15 @@ pragma solidity ^0.6.0;
 pragma experimental ABIEncoderV2;
 
 import "./IPermissions.sol";
-import "../token/IFei.sol";
+import "../token/ICowrie.sol";
 
 /// @title Core Interface
-/// @author Fei Protocol
+/// @author Cowrie Protocol
 interface ICore is IPermissions {
     // ----------- Events -----------
 
-    event FeiUpdate(address indexed _fei);
-    event TribeUpdate(address indexed _tribe);
+    event FeiUpdate(address indexed _cowrie);
+    event TribeUpdate(address indexed _dunia);
     event GenesisGroupUpdate(address indexed _genesisGroup);
     event TribeAllocation(address indexed _to, uint256 _amount);
     event GenesisPeriodComplete(uint256 _timestamp);
@@ -35,9 +35,9 @@ interface ICore is IPermissions {
 
     // ----------- Getters -----------
 
-    function fei() external view returns (IFei);
+    function cowrie() external view returns (ICowrie);
 
-    function tribe() external view returns (IERC20);
+    function dunia() external view returns (IERC20);
 
     function genesisGroup() external view returns (address);
 

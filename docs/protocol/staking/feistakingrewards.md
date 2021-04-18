@@ -1,12 +1,12 @@
 ---
-description: A Pool for staking FEI/TRIBE Uniswap v2 LP tokens
+description: A Pool for staking COWRIE/TRIBE Uniswap v2 LP tokens
 ---
 
-# FeiStakingRewards
+# DuniaStakingRewards
 
 ## Contract
 
-[FeiStakingRewards](https://github.com/fei-protocol/fei-protocol-core/blob/master/contracts/staking/FeiStakingRewards.sol) implements [StakingRewardsV2](https://github.com/SetProtocol/index-coop-contracts/blob/master/contracts/staking/StakingRewardsV2.sol)
+[DuniaStakingRewards](https://github.com/cowrie-protocol/cowrie-protocol-core/blob/master/contracts/staking/DuniaStakingRewards.sol) implements [StakingRewardsV2](https://github.com/SetProtocol/index-coop-contracts/blob/master/contracts/staking/StakingRewardsV2.sol)
 
 ## Events
 
@@ -65,7 +65,7 @@ Documented on the Synthetix website:
 
 ## ABIs
 
-{% file src="../../.gitbook/assets/feistakingrewards.json" caption="FeiStakingRewards ABI" %}
+{% file src="../../.gitbook/assets/feistakingrewards.json" caption="DuniaStakingRewards ABI" %}
 
 {% file src="../../.gitbook/assets/istakingrewards.json" caption="StakingRewards Interface ABI" %}
 

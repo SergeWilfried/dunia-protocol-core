@@ -2,9 +2,9 @@ pragma solidity ^0.6.0;
 
 import "../token/IUniswapIncentive.sol";
 
-/// @title FeiRouter interface
-/// @author Fei Protocol
-interface IFeiRouter {
+/// @title CowrieRouter interface
+/// @author Cowrie Protocol
+interface ICowrieRouter {
     // ----------- state changing api -----------
 
     function buyFei(

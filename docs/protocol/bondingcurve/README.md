@@ -1,5 +1,5 @@
 ---
-description: 'The fair, scalable issuance mechanism for FEI'
+description: 'The fair, scalable issuance mechanism for COWRIE'
 ---
 
 # Bonding Curves
@@ -16,9 +16,9 @@ Article by Linum Labs with more details:
 
 
 
-## Fei Protocol Bonding Curves
+## Cowrie Protocol Bonding Curves
 
-Fei Protocol's primary issuance mechanism for FEI are bonding curves. These bonding curves can have any parameterization but should follow this pattern:
+Cowrie Protocol's primary issuance mechanism for COWRIE are bonding curves. These bonding curves can have any parameterization but should follow this pattern:
 
 * Use a curve with a desirable growth rate
 * Have a "shift" that determines the starting price
@@ -28,10 +28,10 @@ Fei Protocol's primary issuance mechanism for FEI are bonding curves. These bond
 ![](../../.gitbook/assets/screen-shot-2021-02-13-at-7.34.17-pm.png)
 
 {% hint style="success" %}
-The Fei Core Team feels strongly that Fei Protocol should only issue bonding curves denominated in decentralized tokens
+The Cowrie Core Team feels strongly that Cowrie Protocol should only issue bonding curves denominated in decentralized tokens
 {% endhint %}
 
-Fei Protocol bonding curves have unique features. They are buy-only, meaning that purchasers must go elsewhere to sell their FEI. The Fei Protocol prioritizes PCV liquidity with the assets it receives from the curve. Additionally, the price function of a bonding curve is not based on the total circulating supply of FEI but only based on the amount of FEI purchased on that specific bonding curve.
+Cowrie Protocol bonding curves have unique features. They are buy-only, meaning that purchasers must go elsewhere to sell their COWRIE. The Cowrie Protocol prioritizes PCV liquidity with the assets it receives from the curve. Additionally, the price function of a bonding curve is not based on the total circulating supply of COWRIE but only based on the amount of COWRIE purchased on that specific bonding curve.
 
-Fei Protocol is launching with a single, ETH denominated bonding curve with plans for more as the protocol scales.
+Cowrie Protocol is launching with a single, ETH denominated bonding curve with plans for more as the protocol scales.
 

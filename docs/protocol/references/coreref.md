@@ -1,29 +1,29 @@
 ---
-description: A reference to Fei Core
+description: A reference to Cowrie Core
 ---
 
 # CoreRef
 
 ## Contract
 
-[CoreRef.sol](https://github.com/fei-protocol/fei-protocol-core/blob/master/contracts/refs/CoreRef.sol) implements [ICoreRef](https://github.com/fei-protocol/fei-protocol-core/blob/master/contracts/refs/ICoreRef.sol), [Pausable](https://docs.openzeppelin.com/contracts/3.x/api/utils#Pausable)
+[CoreRef.sol](https://github.com/cowrie-protocol/cowrie-protocol-core/blob/master/contracts/refs/CoreRef.sol) implements [ICoreRef](https://github.com/cowrie-protocol/cowrie-protocol-core/blob/master/contracts/refs/ICoreRef.sol), [Pausable](https://docs.openzeppelin.com/contracts/3.x/api/utils#Pausable)
 
 ## Description
 
 CoreRef is an abstract contract which references Core. It defines basic modifiers and utilities useful for contracts referencing Core.
 
-Most of all Fei Protocol contracts implement the CoreRef contract.
+Most of all Cowrie Protocol contracts implement the CoreRef contract.
 
 The contract defines modifiers of the following types:
 
 * restrict access to certain roles
 * conditional execution if a role is held
-* restrict access to certain contracts \(Fei, Core, GenesisGroup\)
+* restrict access to certain contracts \(Cowrie, Core, GenesisGroup\)
 * restrict access to post genesis period
 
 It allows the governor of a currently referenced Core contract to update to a new referenced Core contract
 
-It can read in referenced contract addresses including Core, Fei, Tribe or get token balances.
+It can read in referenced contract addresses including Core, Cowrie, Dunia or get token balances.
 
 {% page-ref page="../access-control/core.md" %}
 
@@ -31,11 +31,11 @@ It can read in referenced contract addresses including Core, Fei, Tribe or get t
 
 {% tabs %}
 {% tab title="CoreUpdate" %}
-Referenced Fei Core contract update
+Referenced Cowrie Core contract update
 
 | type | param | description |
 | :--- | :--- | :--- |
-| address indexed | \_core | new Fei Core |
+| address indexed | \_core | new Cowrie Core |
 {% endtab %}
 {% endtabs %}
 
@@ -47,23 +47,23 @@ Referenced Fei Core contract update
 function core() external view returns (ICore);
 ```
 
-Returns the referenced [Fei Core](../access-control/core.md) address as an interface.
+Returns the referenced [Cowrie Core](../access-control/core.md) address as an interface.
 
-### fei
-
-```javascript
-function fei() external view returns (IFei);
-```
-
-Returns the [FEI](../fei-stablecoin/fei-fei-usd.md) token address as an interface.
-
-### tribe
+### cowrie
 
 ```javascript
-function tribe() external view returns (IERC20);
+function cowrie() external view returns (ICowrie);
 ```
 
-Returns the [TRIBE](../../governance/tribe.md) token address as an interface.
+Returns the [COWRIE](../cowrie-stablecoin/cowrie-cowrie-usd.md) token address as an interface.
+
+### dunia
+
+```javascript
+function dunia() external view returns (IERC20);
+```
+
+Returns the [TRIBE](../../governance/dunia.md) token address as an interface.
 
 ### feiBalance
 
@@ -71,7 +71,7 @@ Returns the [TRIBE](../../governance/tribe.md) token address as an interface.
 function feiBalance() external view returns (uint256);
 ```
 
-Returns the amount of FEI held by this contract
+Returns the amount of COWRIE held by this contract
 
 ### tribeBalance
 
@@ -89,7 +89,7 @@ Returns the amount of TRIBE held by this contract
 function setCore(address core) external;
 ```
 
-Sets the currently referenced [Fei Core](../access-control/core.md) contract to `core`
+Sets the currently referenced [Cowrie Core](../access-control/core.md) contract to `core`
 
 emits `CoreUpdate`
 

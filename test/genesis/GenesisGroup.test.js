@@ -13,8 +13,8 @@ const {
   balance,
   time,
   expect,
-  Tribe,
-  Fei,
+  Dunia,
+  Cowrie,
   MockIDO,
   MockBondingCurve,
   GenesisGroup,
@@ -29,10 +29,10 @@ describe('GenesisGroup', function () {
   beforeEach(async function () {
     this.core = await getCore(false);
     
-    this.fei = await Fei.at(await this.core.fei());
-    this.tribe = await Tribe.at(await this.core.tribe());
+    this.cowrie = await Cowrie.at(await this.core.cowrie());
+    this.dunia = await Dunia.at(await this.core.dunia());
     this.bc = await MockBondingCurve.new(false, 10);
-    this.ido = await MockIDO.new(this.tribe.address, 10, this.fei.address);
+    this.ido = await MockIDO.new(this.dunia.address, 10, this.cowrie.address);
     this.bo = await MockBondingCurveOracle.new();
 
     this.duration = new BN('1000');
@@ -44,10 +44,10 @@ describe('GenesisGroup', function () {
     await this.core.allocateTribe(this.ido.address, 10000000, {from: governorAddress});
 
     await this.core.setGenesisGroup(this.genesisGroup.address, {from: governorAddress});
-    // 5:1 FEI to TRIBE ratio
+    // 5:1 COWRIE to TRIBE ratio
 
     this.genesisFeiAmount = new BN('50000');
-    this.fei.mint(this.genesisGroup.address, this.genesisFeiAmount, {from: minterAddress});
+    this.cowrie.mint(this.genesisGroup.address, this.genesisFeiAmount, {from: minterAddress});
     this.flashGenesis = await FlashGenesis.new(this.genesisGroup.address);
   });
 
@@ -260,7 +260,7 @@ describe('GenesisGroup', function () {
         });
 
         it('no swaps', async function() {
-          expect(await this.fei.balanceOf(this.genesisGroup.address)).to.be.bignumber.equal(this.genesisFeiAmount);
+          expect(await this.cowrie.balanceOf(this.genesisGroup.address)).to.be.bignumber.equal(this.genesisFeiAmount);
         });
   
         it('inits Bonding Curve Oracle', async function() {
@@ -300,7 +300,7 @@ describe('GenesisGroup', function () {
         });
 
         it('swaps', async function() {
-          expect(await this.fei.balanceOf(this.genesisGroup.address)).to.be.bignumber.equal(this.genesisFeiAmount.div(new BN('2')));
+          expect(await this.cowrie.balanceOf(this.genesisGroup.address)).to.be.bignumber.equal(this.genesisFeiAmount.div(new BN('2')));
         });
   
         it('inits Bonding Curve Oracle', async function() {
@@ -359,15 +359,15 @@ describe('GenesisGroup', function () {
 
             it('updates user balances', async function() {
               expect(await this.genesisGroup.balanceOf(userAddress)).to.be.bignumber.equal(new BN(0));
-              expect(await this.fei.balanceOf(userAddress)).to.be.bignumber.equal(this.expectedUserFei);
-              expect(await this.tribe.balanceOf(userAddress)).to.be.bignumber.equal(this.expectedUserTribe);
+              expect(await this.cowrie.balanceOf(userAddress)).to.be.bignumber.equal(this.expectedUserFei);
+              expect(await this.dunia.balanceOf(userAddress)).to.be.bignumber.equal(this.expectedUserTribe);
               expect(await this.genesisGroup.committedFGEN(userAddress)).to.be.bignumber.equal(new BN(0));
             });
 
             it('updates totals', async function() {
               expect(await this.genesisGroup.totalSupply()).to.be.bignumber.equal(new BN(250));
-              expect(await this.fei.balanceOf(this.genesisGroup.address)).to.be.bignumber.equal(this.genesisFeiAmount.sub(this.expectedUserFei));
-              expect(await this.tribe.balanceOf(this.genesisGroup.address)).to.be.bignumber.equal(this.tribeGenesisAmount.sub(this.expectedUserTribe));
+              expect(await this.cowrie.balanceOf(this.genesisGroup.address)).to.be.bignumber.equal(this.genesisFeiAmount.sub(this.expectedUserFei));
+              expect(await this.dunia.balanceOf(this.genesisGroup.address)).to.be.bignumber.equal(this.tribeGenesisAmount.sub(this.expectedUserTribe));
               expect(await this.genesisGroup.totalCommittedTribe()).to.be.bignumber.equal(new BN('0'));
               expect(await this.genesisGroup.totalCommittedFGEN()).to.be.bignumber.equal(new BN('0'));
             });
@@ -404,15 +404,15 @@ describe('GenesisGroup', function () {
 
           it('updates user balances', async function() {
             expect(await this.genesisGroup.balanceOf(userAddress)).to.be.bignumber.equal(new BN(0));
-            expect(await this.fei.balanceOf(userAddress)).to.be.bignumber.equal(this.expectedUserFei);
-            expect(await this.tribe.balanceOf(userAddress)).to.be.bignumber.equal(this.expectedUserTribe);
+            expect(await this.cowrie.balanceOf(userAddress)).to.be.bignumber.equal(this.expectedUserFei);
+            expect(await this.dunia.balanceOf(userAddress)).to.be.bignumber.equal(this.expectedUserTribe);
             expect(await this.genesisGroup.committedFGEN(userAddress)).to.be.bignumber.equal(new BN(0));
           });
 
           it('updates totals', async function() {
             expect(await this.genesisGroup.totalSupply()).to.be.bignumber.equal(new BN(250));
-            expect(await this.fei.balanceOf(this.genesisGroup.address)).to.be.bignumber.equal(this.genesisFeiAmount.sub(this.expectedUserFei));
-            expect(await this.tribe.balanceOf(this.genesisGroup.address)).to.be.bignumber.equal(this.tribeGenesisAmount.sub(this.expectedUserTribe));
+            expect(await this.cowrie.balanceOf(this.genesisGroup.address)).to.be.bignumber.equal(this.genesisFeiAmount.sub(this.expectedUserFei));
+            expect(await this.dunia.balanceOf(this.genesisGroup.address)).to.be.bignumber.equal(this.tribeGenesisAmount.sub(this.expectedUserTribe));
             expect(await this.genesisGroup.totalCommittedTribe()).to.be.bignumber.equal(new BN('0'));
             expect(await this.genesisGroup.totalCommittedFGEN()).to.be.bignumber.equal(new BN('0'));
           });
@@ -451,15 +451,15 @@ describe('GenesisGroup', function () {
 
             it('updates user balances', async function() {
               expect(await this.genesisGroup.balanceOf(secondUserAddress)).to.be.bignumber.equal(new BN(0));
-              expect(await this.fei.balanceOf(secondUserAddress)).to.be.bignumber.equal(this.expectedUserFei);
-              expect(await this.tribe.balanceOf(secondUserAddress)).to.be.bignumber.equal(this.expectedUserTribe);
+              expect(await this.cowrie.balanceOf(secondUserAddress)).to.be.bignumber.equal(this.expectedUserFei);
+              expect(await this.dunia.balanceOf(secondUserAddress)).to.be.bignumber.equal(this.expectedUserTribe);
               expect(await this.genesisGroup.committedFGEN(secondUserAddress)).to.be.bignumber.equal(new BN(0));
             });
     
             it('updates totals', async function() {
               expect(await this.genesisGroup.totalSupply()).to.be.bignumber.equal(new BN(0));
-              expect(await this.fei.balanceOf(this.genesisGroup.address)).to.be.bignumber.equal(new BN('0'));
-              expect(await this.tribe.balanceOf(this.genesisGroup.address)).to.be.bignumber.equal(new BN('0'));
+              expect(await this.cowrie.balanceOf(this.genesisGroup.address)).to.be.bignumber.equal(new BN('0'));
+              expect(await this.dunia.balanceOf(this.genesisGroup.address)).to.be.bignumber.equal(new BN('0'));
               expect(await this.genesisGroup.totalCommittedTribe()).to.be.bignumber.equal(new BN('0'));
               expect(await this.genesisGroup.totalCommittedFGEN()).to.be.bignumber.equal(new BN('0'));
             });
@@ -509,15 +509,15 @@ describe('GenesisGroup', function () {
 
           it('updates user balances', async function() {
             expect(await this.genesisGroup.balanceOf(userAddress)).to.be.bignumber.equal(new BN(0));
-            expect(await this.fei.balanceOf(userAddress)).to.be.bignumber.equal(this.expectedUserFei);
-            expect(await this.tribe.balanceOf(userAddress)).to.be.bignumber.equal(this.totalExpectedUserTribe);
+            expect(await this.cowrie.balanceOf(userAddress)).to.be.bignumber.equal(this.expectedUserFei);
+            expect(await this.dunia.balanceOf(userAddress)).to.be.bignumber.equal(this.totalExpectedUserTribe);
             expect(await this.genesisGroup.committedFGEN(userAddress)).to.be.bignumber.equal(new BN(0));
           });
 
           it('updates totals', async function() {
             expect(await this.genesisGroup.totalSupply()).to.be.bignumber.equal(new BN(0));
-            expect(await this.fei.balanceOf(this.genesisGroup.address)).to.be.bignumber.equal(new BN('0'));
-            expect(await this.tribe.balanceOf(this.genesisGroup.address)).to.be.bignumber.equal(this.totalGenesisTribe.sub(this.totalExpectedUserTribe));
+            expect(await this.cowrie.balanceOf(this.genesisGroup.address)).to.be.bignumber.equal(new BN('0'));
+            expect(await this.dunia.balanceOf(this.genesisGroup.address)).to.be.bignumber.equal(this.totalGenesisTribe.sub(this.totalExpectedUserTribe));
             expect(await this.genesisGroup.totalCommittedTribe()).to.be.bignumber.equal(this.expectedSecondUserCommittedTribe);
             expect(await this.genesisGroup.totalCommittedFGEN()).to.be.bignumber.equal(this.secondUserFGEN);
           });
@@ -558,15 +558,15 @@ describe('GenesisGroup', function () {
 
             it('updates user balances', async function() {
               expect(await this.genesisGroup.balanceOf(secondUserAddress)).to.be.bignumber.equal(new BN(0));
-              expect(await this.fei.balanceOf(secondUserAddress)).to.be.bignumber.equal(this.expectedUserFei);
-              expect(await this.tribe.balanceOf(secondUserAddress)).to.be.bignumber.equal(this.totalExpectedUserTribe);
+              expect(await this.cowrie.balanceOf(secondUserAddress)).to.be.bignumber.equal(this.expectedUserFei);
+              expect(await this.dunia.balanceOf(secondUserAddress)).to.be.bignumber.equal(this.totalExpectedUserTribe);
               expect(await this.genesisGroup.committedFGEN(secondUserAddress)).to.be.bignumber.equal(new BN(0));
             });
     
             it('updates totals', async function() {
               expect(await this.genesisGroup.totalSupply()).to.be.bignumber.equal(new BN(0));
-              expect(await this.fei.balanceOf(this.genesisGroup.address)).to.be.bignumber.equal(new BN('0'));
-              expect(await this.tribe.balanceOf(this.genesisGroup.address)).to.be.bignumber.equal(new BN('0'));
+              expect(await this.cowrie.balanceOf(this.genesisGroup.address)).to.be.bignumber.equal(new BN('0'));
+              expect(await this.dunia.balanceOf(this.genesisGroup.address)).to.be.bignumber.equal(new BN('0'));
               expect(await this.genesisGroup.totalCommittedTribe()).to.be.bignumber.equal(new BN('0'));
               expect(await this.genesisGroup.totalCommittedFGEN()).to.be.bignumber.equal(new BN('0'));
             });
@@ -714,8 +714,8 @@ describe('GenesisGroup', function () {
         })
 
         it('updates user balances', async function() {
-          expect(await this.tribe.balanceOf(userAddress)).to.be.bignumber.equal('257500');
-          expect(await this.tribe.balanceOf(secondUserAddress)).to.be.bignumber.equal('127500');        
+          expect(await this.dunia.balanceOf(userAddress)).to.be.bignumber.equal('257500');
+          expect(await this.dunia.balanceOf(secondUserAddress)).to.be.bignumber.equal('127500');        
         });
 
         it('updates totals', async function() {

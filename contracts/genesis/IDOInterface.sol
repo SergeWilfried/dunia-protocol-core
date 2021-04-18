@@ -4,7 +4,7 @@ pragma experimental ABIEncoderV2;
 import "../external/Decimal.sol";
 
 /// @title IDO interface
-/// @author Fei Protocol
+/// @author Cowrie Protocol
 interface IDOInterface {
     // ----------- Events -----------
 

@@ -9,7 +9,7 @@ contract IDOOrchestrator is IIDOOrchestrator, Ownable {
     function init(
         address core,
         address admin,
-        address tribe,
+        address dunia,
         address pair,
         address router,
         uint256 releaseWindowDuration
@@ -23,7 +23,7 @@ contract IDOOrchestrator is IIDOOrchestrator, Ownable {
             new IDO(core, admin, releaseWindowDuration, pair, router)
         );
         timelockedDelegator = address(
-            new TimelockedDelegator(tribe, admin, releaseWindowDuration)
+            new TimelockedDelegator(dunia, admin, releaseWindowDuration)
         );
     }
 

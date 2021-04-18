@@ -4,8 +4,8 @@ pragma experimental ABIEncoderV2;
 import "./BondingCurve.sol";
 import "../pcv/IPCVDeposit.sol";
 
-/// @title a square root growth bonding curve for purchasing FEI with ETH
-/// @author Fei Protocol
+/// @title a square root growth bonding curve for purchasing COWRIE with ETH
+/// @author Cowrie Protocol
 contract EthBondingCurve is BondingCurve {
     // solhint-disable-next-line var-name-mixedcase
     uint256 internal immutable SHIFT; // k shift
@@ -33,10 +33,10 @@ contract EthBondingCurve is BondingCurve {
         SHIFT = scale / 3; // Enforces a .50c starting price per bonding curve formula
     }
 
-    /// @notice purchase FEI for underlying tokens
-    /// @param to address to receive FEI
+    /// @notice purchase COWRIE for underlying tokens
+    /// @param to address to receive COWRIE
     /// @param amountIn amount of underlying tokens input
-    /// @return amountOut amount of FEI received
+    /// @return amountOut amount of COWRIE received
     function purchase(address to, uint256 amountIn)
         external
         payable

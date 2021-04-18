@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 import "./IPermissions.sol";
 
 /// @title Access control module for Core
-/// @author Fei Protocol
+/// @author Cowrie Protocol
 contract Permissions is IPermissions, AccessControl {
     bytes32 public constant BURNER_ROLE = keccak256("BURNER_ROLE");
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");

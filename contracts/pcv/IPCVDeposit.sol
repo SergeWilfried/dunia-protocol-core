@@ -1,7 +1,7 @@
 pragma solidity ^0.6.2;
 
 /// @title a PCV Deposit interface
-/// @author Fei Protocol
+/// @author Cowrie Protocol
 interface IPCVDeposit {
     // ----------- Events -----------
     event Deposit(address indexed _from, uint256 _amount);

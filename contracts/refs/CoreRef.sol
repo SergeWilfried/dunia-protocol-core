@@ -6,13 +6,13 @@ import "@openzeppelin/contracts/utils/Pausable.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 
 /// @title A Reference to Core
-/// @author Fei Protocol
+/// @author Cowrie Protocol
 /// @notice defines some modifiers and utilities around interacting with Core
 abstract contract CoreRef is ICoreRef, Pausable {
     ICore private _core;
 
     /// @notice CoreRef constructor
-    /// @param core Fei Core to reference
+    /// @param core Cowrie Core to reference
     constructor(address core) public {
         _core = ICore(core);
     }
@@ -65,7 +65,7 @@ abstract contract CoreRef is ICoreRef, Pausable {
     }
 
     modifier onlyFei() {
-        require(msg.sender == address(fei()), "CoreRef: Caller is not FEI");
+        require(msg.sender == address(cowrie()), "CoreRef: Caller is not COWRIE");
         _;
     }
 
@@ -113,35 +113,35 @@ abstract contract CoreRef is ICoreRef, Pausable {
         return _core;
     }
 
-    /// @notice address of the Fei contract referenced by Core
-    /// @return IFei implementation address
-    function fei() public view override returns (IFei) {
-        return _core.fei();
+    /// @notice address of the Cowrie contract referenced by Core
+    /// @return ICowrie implementation address
+    function cowrie() public view override returns (ICowrie) {
+        return _core.cowrie();
     }
 
-    /// @notice address of the Tribe contract referenced by Core
+    /// @notice address of the Dunia contract referenced by Core
     /// @return IERC20 implementation address
-    function tribe() public view override returns (IERC20) {
-        return _core.tribe();
+    function dunia() public view override returns (IERC20) {
+        return _core.dunia();
     }
 
-    /// @notice fei balance of contract
-    /// @return fei amount held
+    /// @notice cowrie balance of contract
+    /// @return cowrie amount held
     function feiBalance() public view override returns (uint256) {
-        return fei().balanceOf(address(this));
+        return cowrie().balanceOf(address(this));
     }
 
-    /// @notice tribe balance of contract
-    /// @return tribe amount held
+    /// @notice dunia balance of contract
+    /// @return dunia amount held
     function tribeBalance() public view override returns (uint256) {
-        return tribe().balanceOf(address(this));
+        return dunia().balanceOf(address(this));
     }
 
     function _burnFeiHeld() internal {
-        fei().burn(feiBalance());
+        cowrie().burn(feiBalance());
     }
 
     function _mintFei(uint256 amount) internal {
-        fei().mint(address(this), amount);
+        cowrie().mint(address(this), amount);
     }
 }

@@ -4,7 +4,7 @@ pragma experimental ABIEncoderV2;
 import "../oracle/IOracle.sol";
 
 /// @title OracleRef interface
-/// @author Fei Protocol
+/// @author Cowrie Protocol
 interface IOracleRef {
     // ----------- Events -----------
 

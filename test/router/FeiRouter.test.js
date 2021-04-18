@@ -7,8 +7,8 @@ const {
   expect,
   time,
   MAX_UINT256,
-  Fei,
-  FeiRouter,
+  Cowrie,
+  CowrieRouter,
   MockUniswapIncentive,
   MockPair,
   MockWeth,
@@ -16,30 +16,30 @@ const {
   ether
 } = require('../helpers');
 
-describe('FeiRouter', function () {
+describe('CowrieRouter', function () {
 
   beforeEach(async function () {
     this.core = await getCore(true);
 
-    this.fei = await Fei.at(await this.core.fei());
+    this.cowrie = await Cowrie.at(await this.core.cowrie());
 
     this.weth = await MockWeth.new();
     this.weth.deposit({value: ether("1")});
 
-    this.pair = await MockPair.new(this.fei.address, this.weth.address);
+    this.pair = await MockPair.new(this.cowrie.address, this.weth.address);
     this.pair.setReserves("50000000", "100000");
 
     this.incentive = await MockUniswapIncentive.new(this.core.address);
     this.core.grantMinter(this.incentive.address, {from: governorAddress});
     this.core.grantBurner(this.incentive.address, {from: governorAddress});
 
-    await this.fei.setIncentiveContract(this.pair.address, this.incentive.address, {from: governorAddress});
+    await this.cowrie.setIncentiveContract(this.pair.address, this.incentive.address, {from: governorAddress});
 
-    this.router = await FeiRouter.new(this.pair.address, this.weth.address);
+    this.router = await CowrieRouter.new(this.pair.address, this.weth.address);
   
-    this.fei.approve(this.router.address, "1000000000000", {from: userAddress});
-    this.fei.mint(userAddress, "1000000000000", {from: minterAddress});
-    this.fei.mint(this.pair.address, "50000000", {from: minterAddress});
+    this.cowrie.approve(this.router.address, "1000000000000", {from: userAddress});
+    this.cowrie.mint(userAddress, "1000000000000", {from: minterAddress});
+    this.cowrie.mint(this.pair.address, "50000000", {from: minterAddress});
 
     this.weth.mint(this.router.address, "1000000000");
     this.weth.mint(this.pair.address, "100000");
@@ -51,7 +51,7 @@ describe('FeiRouter', function () {
     describe('Mint', function() {
       describe('Not enough mint', function () {
         it('reverts', async function () {
-          await expectRevert(this.router.buyFei(101, 10000, userAddress, MAX_UINT256, {value: 30, from: userAddress}), "FeiRouter: Not enough reward");
+          await expectRevert(this.router.buyFei(101, 10000, userAddress, MAX_UINT256, {value: 30, from: userAddress}), "CowrieRouter: Not enough reward");
         });
       });
 
@@ -61,15 +61,15 @@ describe('FeiRouter', function () {
         });
 
         it('reverts', async function () {
-          await expectRevert(this.router.buyFei(100, 10000, userAddress, MAX_UINT256, {value: 30, from: userAddress}), "FeiRouter: Not enough reward");
+          await expectRevert(this.router.buyFei(100, 10000, userAddress, MAX_UINT256, {value: 30, from: userAddress}), "CowrieRouter: Not enough reward");
         });
       });
 
       describe('Sufficient mint', function () {
         it('succeeds', async function () {
-          let feiBefore = await this.fei.balanceOf(userAddress);
+          let feiBefore = await this.cowrie.balanceOf(userAddress);
           await this.router.buyFei(100, 10000, userAddress, MAX_UINT256, {value: 30, from: userAddress});
-          let feiAfter = await this.fei.balanceOf(userAddress);
+          let feiAfter = await this.cowrie.balanceOf(userAddress);
           expect(feiAfter.sub(feiBefore)).to.be.bignumber.equal(new BN('15050'));
         });
       });
@@ -82,15 +82,15 @@ describe('FeiRouter', function () {
 
       describe('Too late', function () {
         it('reverts', async function () {
-          await expectRevert(this.router.buyFei(100, 10000, userAddress, this.timestamp.sub(new BN('10')), {value: 30, from: userAddress}), "FeiRouter: Expired");
+          await expectRevert(this.router.buyFei(100, 10000, userAddress, this.timestamp.sub(new BN('10')), {value: 30, from: userAddress}), "CowrieRouter: Expired");
         });
       });
 
       describe('On time', function () {
         it('succeeds', async function () {
-          let feiBefore = await this.fei.balanceOf(userAddress);
+          let feiBefore = await this.cowrie.balanceOf(userAddress);
           await this.router.buyFei(100, 10000, userAddress, this.timestamp.add(new BN('10')), {value: 30, from: userAddress});
-          let feiAfter = await this.fei.balanceOf(userAddress);
+          let feiAfter = await this.cowrie.balanceOf(userAddress);
           expect(feiAfter.sub(feiBefore)).to.be.bignumber.equal(new BN('15050'));
         });
       });
@@ -99,15 +99,15 @@ describe('FeiRouter', function () {
     describe('Slippage', function() {
       describe('Too high', function () {
         it('reverts', async function () {
-          await expectRevert(this.router.buyFei(100, 10000, userAddress, MAX_UINT256, {value: 20, from: userAddress}), "FeiRouter: Insufficient output amount");
+          await expectRevert(this.router.buyFei(100, 10000, userAddress, MAX_UINT256, {value: 20, from: userAddress}), "CowrieRouter: Insufficient output amount");
         });
       });
 
       describe('Acceptable', function () {
         it('succeeds', async function () {
-          let feiBefore = await this.fei.balanceOf(userAddress);
+          let feiBefore = await this.cowrie.balanceOf(userAddress);
           await this.router.buyFei(100, 10000, userAddress, MAX_UINT256, {value: 21, from: userAddress});
-          let feiAfter = await this.fei.balanceOf(userAddress);
+          let feiAfter = await this.cowrie.balanceOf(userAddress);
           expect(feiAfter.sub(feiBefore)).to.be.bignumber.equal(new BN('10566'));
         });
       });
@@ -122,15 +122,15 @@ describe('FeiRouter', function () {
     describe('Burn', function() {
       describe('Too much burn', function () {
         it('reverts', async function () {
-          await expectRevert(this.router.sellFei(99, 10000, 10, userAddress, MAX_UINT256, {from: userAddress}), "FeiRouter: Penalty too high");
+          await expectRevert(this.router.sellFei(99, 10000, 10, userAddress, MAX_UINT256, {from: userAddress}), "CowrieRouter: Penalty too high");
         });
       });
 
       describe('Sufficient burn', function () {
         it('succeeds', async function () {
-          let feiBefore = await this.fei.balanceOf(this.pair.address);
+          let feiBefore = await this.cowrie.balanceOf(this.pair.address);
           await this.router.sellFei(100, 10000, 10, userAddress, MAX_UINT256, {from: userAddress});
-          let feiAfter = await this.fei.balanceOf(this.pair.address);
+          let feiAfter = await this.cowrie.balanceOf(this.pair.address);
           expect(feiAfter.sub(feiBefore)).to.be.bignumber.equal(new BN('9900'));
         });
       });
@@ -141,9 +141,9 @@ describe('FeiRouter', function () {
         });
 
         it('succeeds', async function () {
-          let feiBefore = await this.fei.balanceOf(this.pair.address);
+          let feiBefore = await this.cowrie.balanceOf(this.pair.address);
           await this.router.sellFei(99, 10000, 10, userAddress, MAX_UINT256, {from: userAddress});
-          let feiAfter = await this.fei.balanceOf(this.pair.address);
+          let feiAfter = await this.cowrie.balanceOf(this.pair.address);
           expect(feiAfter.sub(feiBefore)).to.be.bignumber.equal(new BN('10000'));
         });
       });
@@ -156,15 +156,15 @@ describe('FeiRouter', function () {
 
       describe('Too late', function () {
         it('reverts', async function () {
-          await expectRevert(this.router.sellFei(100, 10000, 10, userAddress, this.timestamp.sub(new BN('10')), {from: userAddress}), "FeiRouter: Expired");
+          await expectRevert(this.router.sellFei(100, 10000, 10, userAddress, this.timestamp.sub(new BN('10')), {from: userAddress}), "CowrieRouter: Expired");
         });
       });
 
       describe('On time', function () {
         it('succeeds', async function () {
-          let feiBefore = await this.fei.balanceOf(this.pair.address);
+          let feiBefore = await this.cowrie.balanceOf(this.pair.address);
           await this.router.sellFei(100, 10000, 10, userAddress, this.timestamp.add(new BN('10')), {from: userAddress});
-          let feiAfter = await this.fei.balanceOf(this.pair.address);
+          let feiAfter = await this.cowrie.balanceOf(this.pair.address);
           expect(feiAfter.sub(feiBefore)).to.be.bignumber.equal(new BN('9900'));
         });
       });
@@ -173,15 +173,15 @@ describe('FeiRouter', function () {
     describe('Slippage', function() {
       describe('Too high', function () {
         it('reverts', async function () {
-          await expectRevert(this.router.sellFei(100, 10000, 20, userAddress, MAX_UINT256, {from: userAddress}), "FeiRouter: Insufficient output amount");
+          await expectRevert(this.router.sellFei(100, 10000, 20, userAddress, MAX_UINT256, {from: userAddress}), "CowrieRouter: Insufficient output amount");
         });
       });
 
       describe('Acceptable', function () {
         it('succeeds', async function () {
-          let feiBefore = await this.fei.balanceOf(this.pair.address);
+          let feiBefore = await this.cowrie.balanceOf(this.pair.address);
           await this.router.sellFei(100, 10000, 19, userAddress, MAX_UINT256, {from: userAddress});
-          let feiAfter = await this.fei.balanceOf(this.pair.address);
+          let feiAfter = await this.cowrie.balanceOf(this.pair.address);
           expect(feiAfter.sub(feiBefore)).to.be.bignumber.equal(new BN('9900'));
         });
       });

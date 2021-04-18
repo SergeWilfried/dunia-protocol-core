@@ -22,9 +22,9 @@ contract MockIncentive is IIncentive, CoreRef {
     ) public override virtual {
 		if (isMint) {
 			address target = incentivizeRecipient ? recipient : sender;
-        	fei().mint(target, INCENTIVE);
+        	cowrie().mint(target, INCENTIVE);
 		} else {
-			fei().burnFrom(recipient, INCENTIVE);
+			cowrie().burnFrom(recipient, INCENTIVE);
 		}
     }
 

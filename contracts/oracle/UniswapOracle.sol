@@ -10,7 +10,7 @@ import "../external/SafeMathCopy.sol";
 import "../external/UniswapV2OracleLibrary.sol";
 
 /// @title Uniswap Oracle for ETH/USDC
-/// @author Fei Protocol
+/// @author Cowrie Protocol
 /// @notice maintains the TWAP of a uniswap pair contract over a specified duration
 contract UniswapOracle is IUniswapOracle, CoreRef {
     using Decimal for Decimal.D256;
@@ -35,7 +35,7 @@ contract UniswapOracle is IUniswapOracle, CoreRef {
     uint256 private constant USDC_DECIMALS_MULTIPLIER = 1e12; // to normalize USDC and ETH wei units
 
     /// @notice UniswapOracle constructor
-    /// @param _core Fei Core for reference
+    /// @param _core Cowrie Core for reference
     /// @param _pair Uniswap Pair to provide TWAP
     /// @param _duration TWAP duration
     /// @param _isPrice0 flag for using token0 or token1 for cumulative on Uniswap

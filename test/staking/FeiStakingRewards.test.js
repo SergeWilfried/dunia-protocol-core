@@ -8,21 +8,21 @@ const {
     expectRevert,
     time,
     expect,
-    Fei,
-    Tribe,
-    FeiStakingRewards,
+    Cowrie,
+    Dunia,
+    DuniaStakingRewards,
     MockERC20,
     getCore
   } = require('../helpers');
 
-  describe('FeiStakingRewards', function () {
+  describe('DuniaStakingRewards', function () {
 
     beforeEach(async function () {
       
       this.core = await getCore(true);
   
-      this.fei = await Fei.at(await this.core.fei());
-      this.tribe = await Tribe.at(await this.core.tribe());
+      this.cowrie = await Cowrie.at(await this.core.cowrie());
+      this.dunia = await Dunia.at(await this.core.dunia());
   
       this.decimals = new BN('1000000000000000000');
       this.window = new BN('1000000');
@@ -30,26 +30,26 @@ const {
       this.rewardAmount = new BN('100000000').mul(this.decimals);
       this.stakedAmount = this.decimals;
 
-      this.staking = await FeiStakingRewards.new(
+      this.staking = await DuniaStakingRewards.new(
           governorAddress, 
-          this.tribe.address,
-          this.fei.address, // Using FEI instead of LP tokens for simplicity
+          this.dunia.address,
+          this.cowrie.address, // Using COWRIE instead of LP tokens for simplicity
           this.window
         );
 
-      await this.fei.mint(userAddress, this.stakedAmount, {from: minterAddress});
-      await this.fei.mint(secondUserAddress, this.stakedAmount.mul(new BN('10')), {from: minterAddress});
+      await this.cowrie.mint(userAddress, this.stakedAmount, {from: minterAddress});
+      await this.cowrie.mint(secondUserAddress, this.stakedAmount.mul(new BN('10')), {from: minterAddress});
       
       await this.core.allocateTribe(this.staking.address, this.rewardAmount, {from: governorAddress});
     });
   
     describe('Init', function() {
       it('rewardsToken', async function() {
-        expect(await this.staking.rewardsToken()).to.be.equal(this.tribe.address);
+        expect(await this.staking.rewardsToken()).to.be.equal(this.dunia.address);
       });
   
       it('current price', async function() {
-        expect(await this.staking.stakingToken()).to.be.equal(this.fei.address);
+        expect(await this.staking.stakingToken()).to.be.equal(this.cowrie.address);
       });
   
       it('periodFinish', async function() {
@@ -156,16 +156,16 @@ const {
     describe('recoverERC20', function() {
         describe('non-owner', function() {
             it('reverts', async function() {
-                await expectRevert(this.staking.recoverERC20(this.tribe.address, userAddress, this.rewardAmount, {from: userAddress}), "Caller is not RewardsDistribution contract");
+                await expectRevert(this.staking.recoverERC20(this.dunia.address, userAddress, this.rewardAmount, {from: userAddress}), "Caller is not RewardsDistribution contract");
             });
         });
         describe('invalid token', function() {
             it('rewards reverts', async function() {
-                await expectRevert(this.staking.recoverERC20(this.tribe.address, governorAddress, this.rewardAmount, {from: governorAddress}), "Cannot withdraw the rewards token");
+                await expectRevert(this.staking.recoverERC20(this.dunia.address, governorAddress, this.rewardAmount, {from: governorAddress}), "Cannot withdraw the rewards token");
             });
 
             it('staking reverts', async function() {
-                await expectRevert(this.staking.recoverERC20(this.fei.address, governorAddress, this.rewardAmount, {from: governorAddress}), "Cannot withdraw the staking token");
+                await expectRevert(this.staking.recoverERC20(this.cowrie.address, governorAddress, this.rewardAmount, {from: governorAddress}), "Cannot withdraw the staking token");
             });
         });
 
@@ -193,8 +193,8 @@ const {
         beforeEach(async function() {
             await this.staking.notifyRewardAmount(this.rewardAmount, {from: governorAddress});
             
-            await this.fei.approve(this.staking.address, this.stakedAmount, {from: userAddress});
-            await this.fei.approve(this.staking.address, this.stakedAmount.mul(new BN('100')), {from: secondUserAddress});
+            await this.cowrie.approve(this.staking.address, this.stakedAmount, {from: userAddress});
+            await this.cowrie.approve(this.staking.address, this.stakedAmount.mul(new BN('100')), {from: secondUserAddress});
 
         });
 
@@ -218,7 +218,7 @@ const {
             it('updated balances', async function() {
                 expect(await this.staking.totalSupply()).to.be.bignumber.equal(this.stakedAmount);
                 expect(await this.staking.balanceOf(userAddress)).to.be.bignumber.equal(this.stakedAmount);
-                expect(await this.fei.balanceOf(userAddress)).to.be.bignumber.equal(new BN('0'));
+                expect(await this.cowrie.balanceOf(userAddress)).to.be.bignumber.equal(new BN('0'));
             });
 
             it('updates rates', async function() {
@@ -248,7 +248,7 @@ const {
             it('updated balances', async function() {
                 expect(await this.staking.totalSupply()).to.be.bignumber.equal(this.stakedAmount);
                 expect(await this.staking.balanceOf(userAddress)).to.be.bignumber.equal(this.stakedAmount);
-                expect(await this.fei.balanceOf(userAddress)).to.be.bignumber.equal(new BN('0'));
+                expect(await this.cowrie.balanceOf(userAddress)).to.be.bignumber.equal(new BN('0'));
             });
 
             it('updates rates', async function() {
@@ -280,7 +280,7 @@ const {
             it('updated balances', async function() {
                 expect(await this.staking.totalSupply()).to.be.bignumber.equal(this.stakedAmount.mul(new BN('2')));
                 expect(await this.staking.balanceOf(userAddress)).to.be.bignumber.equal(this.stakedAmount);
-                expect(await this.fei.balanceOf(userAddress)).to.be.bignumber.equal(new BN('0'));
+                expect(await this.cowrie.balanceOf(userAddress)).to.be.bignumber.equal(new BN('0'));
             });
 
             it('updates rates', async function() {
@@ -311,7 +311,7 @@ const {
             it('updated balances', async function() {
                 expect(await this.staking.totalSupply()).to.be.bignumber.equal(this.stakedAmount.mul(new BN('2')));
                 expect(await this.staking.balanceOf(userAddress)).to.be.bignumber.equal(this.stakedAmount);
-                expect(await this.fei.balanceOf(userAddress)).to.be.bignumber.equal(new BN('0'));
+                expect(await this.cowrie.balanceOf(userAddress)).to.be.bignumber.equal(new BN('0'));
             });
 
             it('updates rates', async function() {
@@ -325,8 +325,8 @@ const {
         beforeEach(async function() {
             await this.staking.notifyRewardAmount(this.rewardAmount, {from: governorAddress});
             
-            await this.fei.approve(this.staking.address, this.stakedAmount, {from: userAddress});
-            await this.fei.approve(this.staking.address, this.stakedAmount.mul(new BN('100')), {from: secondUserAddress});
+            await this.cowrie.approve(this.staking.address, this.stakedAmount, {from: userAddress});
+            await this.cowrie.approve(this.staking.address, this.stakedAmount.mul(new BN('100')), {from: secondUserAddress});
 
         });
 
@@ -359,7 +359,7 @@ const {
             it('updated balances', async function() {
                 expect(await this.staking.totalSupply()).to.be.bignumber.equal(new BN('0'));
                 expect(await this.staking.balanceOf(userAddress)).to.be.bignumber.equal(new BN('0'));
-                expect(await this.fei.balanceOf(userAddress)).to.be.bignumber.equal(this.stakedAmount);
+                expect(await this.cowrie.balanceOf(userAddress)).to.be.bignumber.equal(this.stakedAmount);
             });
 
             it('updates rates', async function() {
@@ -398,7 +398,7 @@ const {
             it('updated balances', async function() {
                 expect(await this.staking.totalSupply()).to.be.bignumber.equal(new BN('0'));
                 expect(await this.staking.balanceOf(userAddress)).to.be.bignumber.equal(new BN('0'));
-                expect(await this.fei.balanceOf(userAddress)).to.be.bignumber.equal(this.stakedAmount);
+                expect(await this.cowrie.balanceOf(userAddress)).to.be.bignumber.equal(this.stakedAmount);
             });
 
             it('updates rates', async function() {
@@ -438,7 +438,7 @@ const {
             it('updated balances', async function() {
                 expect(await this.staking.totalSupply()).to.be.bignumber.equal(this.stakedAmount);
                 expect(await this.staking.balanceOf(userAddress)).to.be.bignumber.equal(new BN('0'));
-                expect(await this.fei.balanceOf(userAddress)).to.be.bignumber.equal(this.stakedAmount);
+                expect(await this.cowrie.balanceOf(userAddress)).to.be.bignumber.equal(this.stakedAmount);
             });
 
             it('updates rates', async function() {
@@ -478,7 +478,7 @@ const {
             it('updated balances', async function() {
                 expect(await this.staking.totalSupply()).to.be.bignumber.equal(this.stakedAmount);
                 expect(await this.staking.balanceOf(userAddress)).to.be.bignumber.equal(new BN('0'));
-                expect(await this.fei.balanceOf(userAddress)).to.be.bignumber.equal(this.stakedAmount);
+                expect(await this.cowrie.balanceOf(userAddress)).to.be.bignumber.equal(this.stakedAmount);
             });
 
             it('updates rates', async function() {
@@ -492,8 +492,8 @@ const {
         beforeEach(async function() {
             await this.staking.notifyRewardAmount(this.rewardAmount, {from: governorAddress});
             
-            await this.fei.approve(this.staking.address, this.stakedAmount, {from: userAddress});
-            await this.fei.approve(this.staking.address, this.stakedAmount.mul(new BN('100')), {from: secondUserAddress});
+            await this.cowrie.approve(this.staking.address, this.stakedAmount, {from: userAddress});
+            await this.cowrie.approve(this.staking.address, this.stakedAmount.mul(new BN('100')), {from: secondUserAddress});
 
         });
 
@@ -520,13 +520,13 @@ const {
             it('earns rewards', async function() {
                 expect(await this.staking.rewards(userAddress)).to.be.bignumber.equal(new BN('0'));
                 expect(await this.staking.earned(userAddress)).to.be.bignumber.equal(new BN('0'));
-                expect(await this.tribe.balanceOf(userAddress)).to.be.bignumber.equal(this.rewardAmount);
+                expect(await this.dunia.balanceOf(userAddress)).to.be.bignumber.equal(this.rewardAmount);
             });
 
             it('updated balances', async function() {
                 expect(await this.staking.totalSupply()).to.be.bignumber.equal(new BN('0'));
                 expect(await this.staking.balanceOf(userAddress)).to.be.bignumber.equal(new BN('0'));
-                expect(await this.fei.balanceOf(userAddress)).to.be.bignumber.equal(this.stakedAmount);
+                expect(await this.cowrie.balanceOf(userAddress)).to.be.bignumber.equal(this.stakedAmount);
             });
 
             it('updates rates', async function() {
@@ -559,13 +559,13 @@ const {
             it('earns rewards', async function() {
                 expect(await this.staking.rewards(userAddress)).to.be.bignumber.equal(new BN('0'));
                 expect(await this.staking.earned(userAddress)).to.be.bignumber.equal(new BN('0'));
-                expect(await this.tribe.balanceOf(userAddress)).to.be.bignumber.equal(this.rewardAmount.div(new BN('2')));
+                expect(await this.dunia.balanceOf(userAddress)).to.be.bignumber.equal(this.rewardAmount.div(new BN('2')));
             });
 
             it('updated balances', async function() {
                 expect(await this.staking.totalSupply()).to.be.bignumber.equal(new BN('0'));
                 expect(await this.staking.balanceOf(userAddress)).to.be.bignumber.equal(new BN('0'));
-                expect(await this.fei.balanceOf(userAddress)).to.be.bignumber.equal(this.stakedAmount);
+                expect(await this.cowrie.balanceOf(userAddress)).to.be.bignumber.equal(this.stakedAmount);
             });
 
             it('updates rates', async function() {
@@ -598,13 +598,13 @@ const {
             it('earns rewards', async function() {
                 expect(await this.staking.rewards(userAddress)).to.be.bignumber.equal(new BN('0'));
                 expect(await this.staking.earned(userAddress)).to.be.bignumber.equal(new BN('0'));
-                expect(await this.tribe.balanceOf(userAddress)).to.be.bignumber.equal(this.rewardAmount.div(new BN('2')));
+                expect(await this.dunia.balanceOf(userAddress)).to.be.bignumber.equal(this.rewardAmount.div(new BN('2')));
             });
 
             it('updated balances', async function() {
                 expect(await this.staking.totalSupply()).to.be.bignumber.equal(this.stakedAmount);
                 expect(await this.staking.balanceOf(userAddress)).to.be.bignumber.equal(new BN('0'));
-                expect(await this.fei.balanceOf(userAddress)).to.be.bignumber.equal(this.stakedAmount);
+                expect(await this.cowrie.balanceOf(userAddress)).to.be.bignumber.equal(this.stakedAmount);
             });
 
             it('updates rates', async function() {
@@ -638,13 +638,13 @@ const {
             it('earns rewards', async function() {
                 expect(await this.staking.rewards(userAddress)).to.be.bignumber.equal(new BN('0'));
                 expect(await this.staking.earned(userAddress)).to.be.bignumber.equal(new BN('0'));
-                expect(await this.tribe.balanceOf(userAddress)).to.be.bignumber.equal(this.rewardAmount.div(new BN('4')));
+                expect(await this.dunia.balanceOf(userAddress)).to.be.bignumber.equal(this.rewardAmount.div(new BN('4')));
             });
 
             it('updated balances', async function() {
                 expect(await this.staking.totalSupply()).to.be.bignumber.equal(this.stakedAmount);
                 expect(await this.staking.balanceOf(userAddress)).to.be.bignumber.equal(new BN('0'));
-                expect(await this.fei.balanceOf(userAddress)).to.be.bignumber.equal(this.stakedAmount);
+                expect(await this.cowrie.balanceOf(userAddress)).to.be.bignumber.equal(this.stakedAmount);
             });
 
             it('updates rates', async function() {

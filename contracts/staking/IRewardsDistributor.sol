@@ -4,7 +4,7 @@ pragma experimental ABIEncoderV2;
 import "./IStakingRewards.sol";
 
 /// @title Rewards Distributor interface
-/// @author Fei Protocol
+/// @author Cowrie Protocol
 interface IRewardsDistributor {
     // ----------- Events -----------
 

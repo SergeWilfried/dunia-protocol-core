@@ -5,7 +5,7 @@ import "./IPCVDeposit.sol";
 import "../token/IUniswapIncentive.sol";
 
 /// @title a Uniswap PCV Controller interface
-/// @author Fei Protocol
+/// @author Cowrie Protocol
 interface IUniswapPCVController {
     // ----------- Events -----------
 

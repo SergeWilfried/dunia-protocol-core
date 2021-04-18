@@ -4,14 +4,14 @@ import "@uniswap/v2-core/contracts/interfaces/IUniswapV2Factory.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "../token/IUniswapIncentive.sol";
-import "../token/IFei.sol";
+import "../token/ICowrie.sol";
 import "../genesis/IGenesisGroup.sol";
 import "../refs/IOracleRef.sol";
 import "../core/ICore.sol";
 import "../staking/IRewardsDistributor.sol";
 import "./IOrchestrator.sol";
 
-interface ITribe {
+interface IDunia {
     function setMinter(address minter_) external;
 }
 
@@ -31,7 +31,7 @@ contract CoreOrchestrator is Ownable {
         IUniswapV2Factory(0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f);
 
     address public ethFeiPair;
-    address public tribeFeiPair;
+    address public duniaCowriePair;
 
     // ----------- Time periods -----------
     uint256 public constant TOKEN_TIMELOCK_RELEASE_WINDOW = 4 * 365 days;
@@ -61,7 +61,7 @@ contract CoreOrchestrator is Ownable {
 
     bool public constant USDC_PER_ETH_IS_PRICE_0 = false; // for the ETH_USDC pair
 
-    uint256 public tribeSupply;
+    uint256 public duniaSupply;
     uint256 public constant IDO_TRIBE_PERCENTAGE = 20;
     uint256 public constant GENESIS_TRIBE_PERCENTAGE = 10;
     uint256 public constant STAKING_TRIBE_PERCENTAGE = 10;
@@ -92,9 +92,9 @@ contract CoreOrchestrator is Ownable {
 
     // ----------- Deployed Contracts -----------
     ICore public core;
-    address public fei;
-    address public tribe;
-    address public feiRouter;
+    address public cowrie;
+    address public dunia;
+    address public duniaRouter;
 
     address public ethUniswapPCVDeposit;
     address public ethBondingCurve;
@@ -112,8 +112,8 @@ contract CoreOrchestrator is Ownable {
 
     address public genesisGroup;
 
-    address public feiStakingRewards;
-    address public feiRewardsDistributor;
+    address public duniaStakingRewards;
+    address public duniaRewardsDistributor;
 
     address public governorAlpha;
     address public timelock;
@@ -157,14 +157,14 @@ contract CoreOrchestrator is Ownable {
         core.init();
         core.grantGuardian(admin);
 
-        tribe = address(core.tribe());
-        fei = address(core.fei());
-        tribeSupply = IERC20(tribe).totalSupply();
+        dunia = address(core.dunia());
+        cowrie = address(core.cowrie());
+        duniaSupply = IERC20(dunia).totalSupply();
     }
 
     function initPairs() public onlyOwner {
-        ethFeiPair = UNISWAP_FACTORY.createPair(fei, WETH);
-        tribeFeiPair = UNISWAP_FACTORY.createPair(tribe, fei);
+        ethFeiPair = UNISWAP_FACTORY.createPair(cowrie, WETH);
+        duniaCowriePair = UNISWAP_FACTORY.createPair(dunia, cowrie);
     }
 
     function initPCVDeposit() public onlyOwner() {
@@ -205,12 +205,12 @@ contract CoreOrchestrator is Ownable {
         );
         core.grantMinter(uniswapIncentive);
         core.grantBurner(uniswapIncentive);
-        IFei(fei).setIncentiveContract(ethFeiPair, uniswapIncentive);
+        ICowrie(cowrie).setIncentiveContract(ethFeiPair, uniswapIncentive);
         incentiveOrchestrator.detonate();
     }
 
     function initRouter() public onlyOwner {
-        feiRouter = routerOrchestrator.init(ethFeiPair, WETH);
+        duniaRouter = routerOrchestrator.init(ethFeiPair, WETH);
     }
 
     function initController() public onlyOwner {
@@ -242,15 +242,15 @@ contract CoreOrchestrator is Ownable {
         (ido, timelockedDelegator) = idoOrchestrator.init(
             address(core),
             admin,
-            tribe,
-            tribeFeiPair,
+            dunia,
+            duniaCowriePair,
             ROUTER,
             TOKEN_TIMELOCK_RELEASE_WINDOW
         );
         core.grantMinter(ido);
         core.grantBurner(ido);
 
-        core.allocateTribe(ido, (tribeSupply * IDO_TRIBE_PERCENTAGE) / 100);
+        core.allocateTribe(ido, (duniaSupply * IDO_TRIBE_PERCENTAGE) / 100);
 
         idoOrchestrator.detonate();
     }
@@ -288,7 +288,7 @@ contract CoreOrchestrator is Ownable {
         core.setGenesisGroup(genesisGroup);
         core.allocateTribe(
             genesisGroup,
-            (tribeSupply * GENESIS_TRIBE_PERCENTAGE) / 100
+            (duniaSupply * GENESIS_TRIBE_PERCENTAGE) / 100
         );
 
         genesisOrchestrator.detonate();
@@ -299,35 +299,35 @@ contract CoreOrchestrator is Ownable {
     }
 
     function initStaking() public onlyOwner {
-        (feiStakingRewards, feiRewardsDistributor) = stakingOrchestrator.init(
+        (duniaStakingRewards, duniaRewardsDistributor) = stakingOrchestrator.init(
             address(core),
-            tribeFeiPair,
-            tribe,
+            duniaCowriePair,
+            dunia,
             STAKING_REWARDS_DURATION,
             STAKING_REWARDS_DRIP_FREQUENCY,
             FEI_KEEPER_INCENTIVE
         );
 
         core.allocateTribe(
-            feiRewardsDistributor,
-            (tribeSupply * STAKING_TRIBE_PERCENTAGE) / 100
+            duniaRewardsDistributor,
+            (duniaSupply * STAKING_TRIBE_PERCENTAGE) / 100
         );
-        core.grantMinter(feiRewardsDistributor);
+        core.grantMinter(duniaRewardsDistributor);
 
-        IRewardsDistributor(feiRewardsDistributor).setStakingContract(feiStakingRewards);
+        IRewardsDistributor(duniaRewardsDistributor).setStakingContract(duniaStakingRewards);
 
         stakingOrchestrator.detonate();
     }
 
     function initGovernance() public onlyOwner {
         (governorAlpha, timelock) = governanceOrchestrator.init(
-            tribe,
+            dunia,
             admin,
             DAO_TIMELOCK_DELAY
         );
         governanceOrchestrator.detonate();
         core.grantGovernor(timelock);
-        ITribe(tribe).setMinter(timelock);
+        IDunia(dunia).setMinter(timelock);
     }
 
     function renounceGovernor() public onlyOwner {

@@ -7,7 +7,7 @@ import "./IOrchestrator.sol";
 
 contract GovernanceOrchestrator is IGovernanceOrchestrator, Ownable {
     function init(
-        address tribe,
+        address dunia,
         address admin,
         uint256 timelockDelay
     )
@@ -18,7 +18,7 @@ contract GovernanceOrchestrator is IGovernanceOrchestrator, Ownable {
     {
         Timelock _timelock = new Timelock(address(this), 0); // set to 0 so we can initialize governorAlpha atomically
         timelock = address(_timelock);
-        GovernorAlpha _governorAlpha = new GovernorAlpha(timelock, tribe, address(this));
+        GovernorAlpha _governorAlpha = new GovernorAlpha(timelock, dunia, address(this));
         governorAlpha = address(_governorAlpha);
         
         // solhint-disable-next-line not-rely-on-time

@@ -6,11 +6,11 @@ description: A LinearTokenTimelock for TRIBE with the ability to sub-delegate lo
 
 ## Contract
 
-[TimelockedDelegator.sol](https://github.com/fei-protocol/fei-protocol-core/blob/master/contracts/dao/TimelockedDelegator.sol) implements [ITimelockedDelegator](https://github.com/fei-protocol/fei-protocol-core/blob/master/contracts/dao/ITimelockedDelegator.sol), [LinearTokenTimelock](https://github.com/fei-protocol/fei-protocol-core/blob/master/contracts/utils/LinearTokenTimelock.sol)
+[TimelockedDelegator.sol](https://github.com/cowrie-protocol/cowrie-protocol-core/blob/master/contracts/dao/TimelockedDelegator.sol) implements [ITimelockedDelegator](https://github.com/cowrie-protocol/cowrie-protocol-core/blob/master/contracts/dao/ITimelockedDelegator.sol), [LinearTokenTimelock](https://github.com/cowrie-protocol/cowrie-protocol-core/blob/master/contracts/utils/LinearTokenTimelock.sol)
 
 ## Description
 
-A TRIBE token timelock which allows subdelegation. Managed by the Fei Core Team to distribute vested TRIBE and voting rights to team members and investors.
+A TRIBE token timelock which allows subdelegation. Managed by the Cowrie Core Team to distribute vested TRIBE and voting rights to team members and investors.
 
 The contract receives TRIBE tokens that vest linearly over a 4 year schedule to a beneficiary. 
 
@@ -73,13 +73,13 @@ function totalDelegated() external view returns (uint256);
 
 Returns the total amount of TRIBE delegated in proxy contracts, excluding the TRIBE held natively in the TimelockedDelegator.
 
-### tribe
+### dunia
 
 ```javascript
-function tribe() external view returns (ITribe);
+function dunia() external view returns (IDunia);
 ```
 
-A reference to the [TRIBE](../../governance/tribe.md) contract.
+A reference to the [TRIBE](../../governance/dunia.md) contract.
 
 ## State-Changing Functions <a id="state-changing-functions"></a>
 

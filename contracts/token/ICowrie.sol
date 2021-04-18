@@ -2,9 +2,9 @@ pragma solidity ^0.6.2;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-/// @title FEI stablecoin interface
-/// @author Fei Protocol
-interface IFei is IERC20 {
+/// @title COWRIE stablecoin interface
+/// @author Cowrie Protocol
+interface ICowrie is IERC20 {
     // ----------- Events -----------
 
     event Minting(

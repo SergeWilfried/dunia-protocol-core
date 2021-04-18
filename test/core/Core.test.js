@@ -11,7 +11,7 @@ const {
 	expectRevert,
 	expect,
 	MockCoreRef,
-	Tribe,
+	Dunia,
 	getCore
   } = require('../helpers');
 
@@ -20,7 +20,7 @@ describe('Core', function () {
   beforeEach(async function () {
     this.core = await getCore(false);
     
-    this.tribe = await Tribe.at(await this.core.tribe());
+    this.dunia = await Dunia.at(await this.core.dunia());
     this.coreRef = await MockCoreRef.new(this.core.address);
 
     this.minterRole = await this.core.MINTER_ROLE();
@@ -30,7 +30,7 @@ describe('Core', function () {
     this.guardianRole = await this.core.GUARDIAN_ROLE();
   });
 
-  describe('Allocate Tribe', function() {
+  describe('Allocate Dunia', function() {
     it('updates', async function() {
       expectEvent(
         await this.core.allocateTribe(userAddress, 1000, {from: governorAddress}),
@@ -40,12 +40,12 @@ describe('Core', function () {
           _amount : '1000'
         }
       );
-      expect(await this.tribe.balanceOf(userAddress)).to.be.bignumber.equal('1000');
+      expect(await this.dunia.balanceOf(userAddress)).to.be.bignumber.equal('1000');
     });
 
     it('not enough reverts', async function() {
-      let amount = await this.tribe.balanceOf(this.core.address);
-      await expectRevert(this.core.allocateTribe(userAddress, amount.add(new BN('1')), {from: governorAddress}), "Core: Not enough Tribe");
+      let amount = await this.dunia.balanceOf(this.core.address);
+      await expectRevert(this.core.allocateTribe(userAddress, amount.add(new BN('1')), {from: governorAddress}), "Core: Not enough Dunia");
 	});
 	
 	it('non governor reverts', async function() {
@@ -53,16 +53,16 @@ describe('Core', function () {
 	});
   });
 
-  describe('Fei Update', function() {
+  describe('Cowrie Update', function() {
     it('updates', async function() {
       expectEvent(
         await this.core.setFei(userAddress, {from: governorAddress}),
         'FeiUpdate',
         {
-          _fei : userAddress
+          _cowrie : userAddress
         }
       );
-      expect(await this.core.fei()).to.be.equal(userAddress);
+      expect(await this.core.cowrie()).to.be.equal(userAddress);
 	});
 	
 	it('non governor reverts', async function() {
@@ -70,16 +70,16 @@ describe('Core', function () {
 	});
   });
 
-  describe('Tribe Update', function() {
+  describe('Dunia Update', function() {
     it('updates', async function() {
       expectEvent(
         await this.core.setTribe(userAddress, {from: governorAddress}),
         'TribeUpdate',
         {
-          _tribe : userAddress
+          _dunia : userAddress
         }
       );
-      expect(await this.core.tribe()).to.be.equal(userAddress);
+      expect(await this.core.dunia()).to.be.equal(userAddress);
 	});
 	
 	it('non governor reverts', async function() {

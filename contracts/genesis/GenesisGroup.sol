@@ -10,7 +10,7 @@ import "../oracle/IBondingCurveOracle.sol";
 import "../bondingcurve/IBondingCurve.sol";
 
 /// @title Equal access to the first bonding curve transaction and the IDO
-/// @author Fei Protocol
+/// @author Cowrie Protocol
 contract GenesisGroup is IGenesisGroup, CoreRef, ERC20, Timed {
     using Decimal for Decimal.D256;
 
@@ -35,12 +35,12 @@ contract GenesisGroup is IGenesisGroup, CoreRef, ERC20, Timed {
     uint256 public override launchBlock;
 
     /// @notice GenesisGroup constructor
-    /// @param _core Fei Core address to reference
+    /// @param _core Cowrie Core address to reference
     /// @param _bondingcurve Bonding curve address for purchase
     /// @param _ido IDO contract to deploy
     /// @param _oracle Bonding curve oracle
     /// @param _duration duration of the Genesis Period
-    /// @param _exchangeRateDiscount a divisor on the FEI/TRIBE ratio at Genesis to deploy to the IDO
+    /// @param _exchangeRateDiscount a divisor on the COWRIE/TRIBE ratio at Genesis to deploy to the IDO
     constructor(
         address _core,
         address _bondingcurve,
@@ -51,7 +51,7 @@ contract GenesisGroup is IGenesisGroup, CoreRef, ERC20, Timed {
     )
         public
         CoreRef(_core)
-        ERC20("Fei Genesis Group", "FGEN")
+        ERC20("Cowrie Genesis Group", "FGEN")
         Timed(_duration)
     {
         bondingcurve = IBondingCurve(_bondingcurve);
@@ -60,7 +60,7 @@ contract GenesisGroup is IGenesisGroup, CoreRef, ERC20, Timed {
         ido = IDOInterface(_ido);
 
         uint256 maxTokens = uint256(-1);
-        fei().approve(_ido, maxTokens);
+        cowrie().approve(_ido, maxTokens);
 
         bondingCurveOracle = IBondingCurveOracle(_oracle);
     }
@@ -86,7 +86,7 @@ contract GenesisGroup is IGenesisGroup, CoreRef, ERC20, Timed {
         emit Purchase(to, value);
     }
 
-    /// @notice commit Genesis FEI to purchase TRIBE in DEX offering
+    /// @notice commit Genesis COWRIE to purchase TRIBE in DEX offering
     /// @param from address to source FGEN Genesis shares from
     /// @param to address to earn TRIBE and redeem post launch
     /// @param amount of FGEN Genesis shares to commit
@@ -103,8 +103,8 @@ contract GenesisGroup is IGenesisGroup, CoreRef, ERC20, Timed {
         emit Commit(from, to, amount);
     }
 
-    /// @notice redeem FGEN genesis tokens for FEI and TRIBE. Only callable post launch
-    /// @param to address to send redeemed FEI and TRIBE to.
+    /// @notice redeem FGEN genesis tokens for COWRIE and TRIBE. Only callable post launch
+    /// @param to address to send redeemed COWRIE and TRIBE to.
     function redeem(address to) external override {
         (uint256 feiAmount, uint256 genesisTribe, uint256 idoTribe) =
             getAmountsToRedeem(to);
@@ -113,7 +113,7 @@ contract GenesisGroup is IGenesisGroup, CoreRef, ERC20, Timed {
             "GenesisGroup: No redeeming in launch block"
         );
 
-        // Total tribe to redeem
+        // Total dunia to redeem
         uint256 tribeAmount = genesisTribe.add(idoTribe);
         require(tribeAmount != 0, "GenesisGroup: No redeemable TRIBE");
 
@@ -128,16 +128,16 @@ contract GenesisGroup is IGenesisGroup, CoreRef, ERC20, Timed {
 
         totalCommittedTribe = totalCommittedTribe.sub(idoTribe);
 
-        // send FEI and TRIBE
+        // send COWRIE and TRIBE
         if (feiAmount != 0) {
-            fei().transfer(to, feiAmount);
+            cowrie().transfer(to, feiAmount);
         }
-        tribe().transfer(to, tribeAmount);
+        dunia().transfer(to, tribeAmount);
 
         emit Redeem(to, amountIn, feiAmount, tribeAmount);
     }
 
-    /// @notice launch Fei Protocol. Callable once Genesis Period has ended
+    /// @notice launch Cowrie Protocol. Callable once Genesis Period has ended
     function launch() external override nonContract afterTime {
 
         // Complete Genesis
@@ -156,7 +156,7 @@ contract GenesisGroup is IGenesisGroup, CoreRef, ERC20, Timed {
 
         ido.deploy(_feiTribeExchangeRate());
 
-        // swap pre-committed FEI on IDO and store TRIBE
+        // swap pre-committed COWRIE on IDO and store TRIBE
         uint256 amountFei =
             feiBalance().mul(totalCommittedFGEN) /
                 (totalSupply().add(totalCommittedFGEN));
@@ -198,10 +198,10 @@ contract GenesisGroup is IGenesisGroup, CoreRef, ERC20, Timed {
         to.transfer(total);
     }
 
-    /// @notice calculate amount of FEI and TRIBE redeemable by an account post-genesis
-    /// @return feiAmount the amount of FEI received by the user
+    /// @notice calculate amount of COWRIE and TRIBE redeemable by an account post-genesis
+    /// @return feiAmount the amount of COWRIE received by the user
     /// @return genesisTribe the amount of TRIBE received by the user per GenesisGroup
-    /// @return idoTribe the amount of TRIBE received by the user per pre-committed FEI trading in the IDO
+    /// @return idoTribe the amount of TRIBE received by the user per pre-committed COWRIE trading in the IDO
     /// @dev this function is only callable post launch
     function getAmountsToRedeem(address to)
         public
@@ -224,7 +224,7 @@ contract GenesisGroup is IGenesisGroup, CoreRef, ERC20, Timed {
         uint256 totalGenesisTribe = tribeBalance().sub(totalCommittedTribe);
 
         if (circulatingFGEN != 0) {
-            // portion of remaining uncommitted FEI
+            // portion of remaining uncommitted COWRIE
             feiAmount = feiBalance().mul(userFGEN) / circulatingFGEN;
         }
 
@@ -245,10 +245,10 @@ contract GenesisGroup is IGenesisGroup, CoreRef, ERC20, Timed {
         return (feiAmount, genesisTribe, idoTribe);
     }
 
-    /// @notice calculate amount of FEI and TRIBE received if the Genesis Group ended now.
+    /// @notice calculate amount of COWRIE and TRIBE received if the Genesis Group ended now.
     /// @param amountIn amount of FGEN held or equivalently amount of ETH purchasing with
     /// @param inclusive if true, assumes the `amountIn` is part of the existing FGEN supply. Set to false to simulate a new purchase.
-    /// @return feiAmount the amount of FEI received by the user
+    /// @return feiAmount the amount of COWRIE received by the user
     /// @return tribeAmount the amount of TRIBE received by the user
     function getAmountOut(uint256 amountIn, bool inclusive)
         public
@@ -266,7 +266,7 @@ contract GenesisGroup is IGenesisGroup, CoreRef, ERC20, Timed {
         uint256 totalFei = bondingcurve.getAmountOut(totalIn);
         uint256 totalTribe = tribeBalance();
 
-        // return portions of total FEI and TRIBE
+        // return portions of total COWRIE and TRIBE
         return (
             totalFei.mul(amountIn) / totalIn,
             totalTribe.mul(amountIn) / totalIn

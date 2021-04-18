@@ -3,8 +3,8 @@ pragma experimental ABIEncoderV2;
 
 import "../external/Decimal.sol";
 
-/// @title generic oracle interface for Fei Protocol
-/// @author Fei Protocol
+/// @title generic oracle interface for Cowrie Protocol
+/// @author Cowrie Protocol
 interface IOracle {
     // ----------- Events -----------
 

@@ -4,19 +4,19 @@ pragma experimental ABIEncoderV2;
 import "@openzeppelin/contracts/proxy/Initializable.sol";
 import "./Permissions.sol";
 import "./ICore.sol";
-import "../token/Fei.sol";
-import "../dao/Tribe.sol";
+import "../token/Cowrie.sol";
+import "../dao/Dunia.sol";
 
-/// @title Source of truth for Fei Protocol
-/// @author Fei Protocol
-/// @notice maintains roles, access control, fei, tribe, genesisGroup, and the TRIBE treasury
+/// @title Source of truth for Cowrie Protocol
+/// @author Cowrie Protocol
+/// @notice maintains roles, access control, cowrie, dunia, genesisGroup, and the TRIBE treasury
 contract Core is ICore, Permissions, Initializable {
 
-    /// @notice the address of the FEI contract
-    IFei public override fei;
+    /// @notice the address of the COWRIE contract
+    ICowrie public override cowrie;
     
     /// @notice the address of the TRIBE contract
-    IERC20 public override tribe;
+    IERC20 public override dunia;
 
     /// @notice the address of the GenesisGroup contract
     address public override genesisGroup;
@@ -26,21 +26,21 @@ contract Core is ICore, Permissions, Initializable {
     function init() external override initializer {
         _setupGovernor(msg.sender);
         
-        Fei _fei = new Fei(address(this));
-        _setFei(address(_fei));
+        Cowrie _cowrie = new Cowrie(address(this));
+        _setFei(address(_cowrie));
 
-        Tribe _tribe = new Tribe(address(this), msg.sender);
-        _setTribe(address(_tribe));
+        Dunia _dunia = new Dunia(address(this), msg.sender);
+        _setTribe(address(_dunia));
     }
 
-    /// @notice sets Fei address to a new address
-    /// @param token new fei address
+    /// @notice sets Cowrie address to a new address
+    /// @param token new cowrie address
     function setFei(address token) external override onlyGovernor {
         _setFei(token);
     }
 
-    /// @notice sets Tribe address to a new address
-    /// @param token new tribe address
+    /// @notice sets Dunia address to a new address
+    /// @param token new dunia address
     function setTribe(address token) external override onlyGovernor {
         _setTribe(token);
     }
@@ -64,13 +64,13 @@ contract Core is ICore, Permissions, Initializable {
         override
         onlyGovernor
     {
-        IERC20 _tribe = tribe;
+        IERC20 _dunia = dunia;
         require(
-            _tribe.balanceOf(address(this)) >= amount,
-            "Core: Not enough Tribe"
+            _dunia.balanceOf(address(this)) >= amount,
+            "Core: Not enough Dunia"
         );
 
-        _tribe.transfer(to, amount);
+        _dunia.transfer(to, amount);
 
         emit TribeAllocation(to, amount);
     }
@@ -94,12 +94,12 @@ contract Core is ICore, Permissions, Initializable {
     }
 
     function _setFei(address token) internal {
-        fei = IFei(token);
+        cowrie = ICowrie(token);
         emit FeiUpdate(token);
     }
 
     function _setTribe(address token) internal {
-        tribe = IERC20(token);
+        dunia = IERC20(token);
         emit TribeUpdate(token);
     }
 }

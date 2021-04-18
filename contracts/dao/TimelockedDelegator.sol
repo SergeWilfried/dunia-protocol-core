@@ -6,29 +6,29 @@ import "./ITimelockedDelegator.sol";
 import "../utils/LinearTokenTimelock.sol";
 
 /// @title a proxy delegate contract for TRIBE
-/// @author Fei Protocol
+/// @author Cowrie Protocol
 contract Delegatee is Ownable {
-    ITribe public tribe;
+    IDunia public dunia;
 
     /// @notice Delegatee constructor
     /// @param _delegatee the address to delegate TRIBE to
-    /// @param _tribe the TRIBE token address
-    constructor(address _delegatee, address _tribe) public {
-        tribe = ITribe(_tribe);
-        tribe.delegate(_delegatee);
+    /// @param _dunia the TRIBE token address
+    constructor(address _delegatee, address _dunia) public {
+        dunia = IDunia(_dunia);
+        dunia.delegate(_delegatee);
     }
 
     /// @notice send TRIBE back to timelock and selfdestruct
     function withdraw() public onlyOwner {
-        ITribe _tribe = tribe;
-        uint256 balance = _tribe.balanceOf(address(this));
-        _tribe.transfer(owner(), balance);
+        IDunia _dunia = dunia;
+        uint256 balance = _dunia.balanceOf(address(this));
+        _dunia.transfer(owner(), balance);
         selfdestruct(payable(owner()));
     }
 }
 
 /// @title a timelock for TRIBE allowing for sub-delegation
-/// @author Fei Protocol
+/// @author Cowrie Protocol
 /// @notice allows the timelocked TRIBE to be delegated by the beneficiary while locked
 contract TimelockedDelegator is ITimelockedDelegator, LinearTokenTimelock {
     /// @notice associated delegate proxy contract for a delegatee
@@ -39,22 +39,22 @@ contract TimelockedDelegator is ITimelockedDelegator, LinearTokenTimelock {
     mapping(address => uint256) public override delegateAmount;
 
     /// @notice the TRIBE token contract
-    ITribe public override tribe;
+    IDunia public override dunia;
 
     /// @notice the total delegated amount of TRIBE
     uint256 public override totalDelegated;
 
     /// @notice Delegatee constructor
-    /// @param _tribe the TRIBE token address
+    /// @param _dunia the TRIBE token address
     /// @param _beneficiary default delegate, admin, and timelock beneficiary
     /// @param _duration duration of the token timelock window
     constructor(
-        address _tribe,
+        address _dunia,
         address _beneficiary,
         uint256 _duration
-    ) public LinearTokenTimelock(_beneficiary, _duration, _tribe) {
-        tribe = ITribe(_tribe);
-        tribe.delegate(_beneficiary);
+    ) public LinearTokenTimelock(_beneficiary, _duration, _dunia) {
+        dunia = IDunia(_dunia);
+        dunia.delegate(_beneficiary);
     }
 
     /// @notice delegate locked TRIBE to a delegatee
@@ -67,7 +67,7 @@ contract TimelockedDelegator is ITimelockedDelegator, LinearTokenTimelock {
     {
         require(
             amount <= _tribeBalance(),
-            "TimelockedDelegator: Not enough Tribe"
+            "TimelockedDelegator: Not enough Dunia"
         );
 
         // withdraw and include an existing delegation
@@ -75,15 +75,15 @@ contract TimelockedDelegator is ITimelockedDelegator, LinearTokenTimelock {
             amount = amount.add(undelegate(delegatee));
         }
 
-        ITribe _tribe = tribe;
+        IDunia _dunia = dunia;
         address _delegateContract =
-            address(new Delegatee(delegatee, address(_tribe)));
+            address(new Delegatee(delegatee, address(_dunia)));
         delegateContract[delegatee] = _delegateContract;
 
         delegateAmount[delegatee] = amount;
         totalDelegated = totalDelegated.add(amount);
 
-        _tribe.transfer(_delegateContract, amount);
+        _dunia.transfer(_delegateContract, amount);
 
         emit Delegate(delegatee, amount);
     }
@@ -122,13 +122,13 @@ contract TimelockedDelegator is ITimelockedDelegator, LinearTokenTimelock {
         return _tribeBalance().add(totalDelegated);
     }
 
-    /// @notice accept beneficiary role over timelocked TRIBE. Delegates all held (non-subdelegated) tribe to beneficiary
+    /// @notice accept beneficiary role over timelocked TRIBE. Delegates all held (non-subdelegated) dunia to beneficiary
     function acceptBeneficiary() public override {
         _setBeneficiary(msg.sender);
-        tribe.delegate(msg.sender);
+        dunia.delegate(msg.sender);
     }
 
     function _tribeBalance() internal view returns (uint256) {
-        return tribe.balanceOf(address(this));
+        return dunia.balanceOf(address(this));
     }
 }

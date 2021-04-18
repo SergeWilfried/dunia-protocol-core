@@ -5,7 +5,7 @@ import "./IIncentive.sol";
 import "../external/Decimal.sol";
 
 /// @title UniswapIncentive interface
-/// @author Fei Protocol
+/// @author Cowrie Protocol
 interface IUniswapIncentive is IIncentive {
     // ----------- Events -----------
 

@@ -2,7 +2,7 @@ pragma solidity ^0.6.0;
 pragma experimental ABIEncoderV2;
 
 /// @title Permissions interface
-/// @author Fei Protocol
+/// @author Cowrie Protocol
 interface IPermissions {
     // ----------- Governor only state changing api -----------
 

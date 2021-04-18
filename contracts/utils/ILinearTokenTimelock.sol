@@ -3,7 +3,7 @@ pragma solidity ^0.6.2;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 /// @title LinearTokenTimelock interface
-/// @author Fei Protocol
+/// @author Cowrie Protocol
 interface ILinearTokenTimelock {
     // ----------- Events -----------
 

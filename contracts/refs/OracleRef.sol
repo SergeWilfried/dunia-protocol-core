@@ -5,7 +5,7 @@ import "./IOracleRef.sol";
 import "./CoreRef.sol";
 
 /// @title Reference to an Oracle
-/// @author Fei Protocol
+/// @author Cowrie Protocol
 /// @notice defines some utilities around interacting with the referenced oracle
 abstract contract OracleRef is IOracleRef, CoreRef {
     using Decimal for Decimal.D256;
@@ -14,7 +14,7 @@ abstract contract OracleRef is IOracleRef, CoreRef {
     IOracle public override oracle;
 
     /// @notice OracleRef constructor
-    /// @param _core Fei Core to reference
+    /// @param _core Cowrie Core to reference
     /// @param _oracle oracle to reference
     constructor(address _core, address _oracle) public CoreRef(_core) {
         _setOracle(_oracle);
@@ -29,7 +29,7 @@ abstract contract OracleRef is IOracleRef, CoreRef {
     /// @notice invert a peg price
     /// @param price the peg price to invert
     /// @return the inverted peg as a Decimal
-    /// @dev the inverted peg would be X per FEI
+    /// @dev the inverted peg would be X per COWRIE
     function invert(Decimal.D256 memory price)
         public
         pure
@@ -47,7 +47,7 @@ abstract contract OracleRef is IOracleRef, CoreRef {
 
     /// @notice the peg price of the referenced oracle
     /// @return the peg as a Decimal
-    /// @dev the peg is defined as FEI per X with X being ETH, dollars, etc
+    /// @dev the peg is defined as COWRIE per X with X being ETH, dollars, etc
     function peg() public view override returns (Decimal.D256 memory) {
         (Decimal.D256 memory _peg, bool valid) = oracle.read();
         require(valid, "OracleRef: oracle invalid");

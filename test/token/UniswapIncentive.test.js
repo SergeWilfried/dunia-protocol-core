@@ -7,7 +7,7 @@ const {
   expectRevert,
   time,
   expect,
-  Fei,
+  Cowrie,
   UniswapIncentive,
   MockPair,
   MockOracle,
@@ -21,22 +21,22 @@ describe('UniswapIncentive', function () {
 
     this.core = await getCore(true);
     
-    this.fei = await Fei.at(await this.core.fei());
+    this.cowrie = await Cowrie.at(await this.core.cowrie());
     this.oracle = await MockOracle.new(500); // 500:1 USD/ETH exchange rate
 
     this.token = await MockERC20.new();
-    this.pair = await MockPair.new(this.token.address, this.fei.address);
+    this.pair = await MockPair.new(this.token.address, this.cowrie.address);
 
     this.incentive = await UniswapIncentive.new(this.core.address, this.oracle.address, this.pair.address, this.pair.address, 333);
 
     await this.core.grantMinter(this.incentive.address, {from: governorAddress});
     await this.core.grantBurner(this.incentive.address, {from: governorAddress});
-    await this.fei.setIncentiveContract(this.pair.address, this.incentive.address, {from: governorAddress});
+    await this.cowrie.setIncentiveContract(this.pair.address, this.incentive.address, {from: governorAddress});
     
-    await this.fei.mint(userAddress, 50000000, {from: minterAddress});
+    await this.cowrie.mint(userAddress, 50000000, {from: minterAddress});
     this.userBalance = new BN(50000000);
 
-    await this.fei.mint(this.pair.address, 5000000, {from: minterAddress});
+    await this.cowrie.mint(this.pair.address, 5000000, {from: minterAddress});
     this.pairBalance = new BN(5000000);
 
   });
@@ -426,16 +426,16 @@ describe('UniswapIncentive', function () {
       });
 
       it('user balance updates', async function() {
-        expect(await this.fei.balanceOf(userAddress)).to.be.bignumber.equal(new BN(1000000).add(this.userBalance));
+        expect(await this.cowrie.balanceOf(userAddress)).to.be.bignumber.equal(new BN(1000000).add(this.userBalance));
       });
 
       it('pair balance updates', async function() {
-        expect(await this.fei.balanceOf(this.pair.address)).to.be.bignumber.equal(this.pairBalance.sub(new BN(1000000)));
+        expect(await this.cowrie.balanceOf(this.pair.address)).to.be.bignumber.equal(this.pairBalance.sub(new BN(1000000)));
       });
 
       it('no incentive', async function() {
-        var user = await this.fei.balanceOf(userAddress);
-        var pair = await this.fei.balanceOf(this.pair.address);
+        var user = await this.cowrie.balanceOf(userAddress);
+        var pair = await this.cowrie.balanceOf(this.pair.address);
 
         expect(user.add(pair).sub(this.userBalance).sub(this.pairBalance)).to.be.bignumber.equal(new BN(0));
       });
@@ -452,20 +452,20 @@ describe('UniswapIncentive', function () {
       describe('enough in wallet', function() {
         beforeEach(async function() {
           this.expectedBurn = new BN(6631); // with rounding error
-          await this.fei.transfer(this.pair.address, 500000, {from: userAddress});
+          await this.cowrie.transfer(this.pair.address, 500000, {from: userAddress});
         });
 
         it('user balance updates', async function() {
-          expect(await this.fei.balanceOf(userAddress)).to.be.bignumber.equal(this.userBalance.sub(new BN(500000)));
+          expect(await this.cowrie.balanceOf(userAddress)).to.be.bignumber.equal(this.userBalance.sub(new BN(500000)));
         });
 
         it('pair balance updates', async function() {
-          expect(await this.fei.balanceOf(this.pair.address)).to.be.bignumber.equal(this.pairBalance.add(new BN(500000)).sub(this.expectedBurn));
+          expect(await this.cowrie.balanceOf(this.pair.address)).to.be.bignumber.equal(this.pairBalance.add(new BN(500000)).sub(this.expectedBurn));
         });
 
         it('burn incentive', async function() {
-          var user = await this.fei.balanceOf(userAddress);
-          var pair = await this.fei.balanceOf(this.pair.address);
+          var user = await this.cowrie.balanceOf(userAddress);
+          var pair = await this.cowrie.balanceOf(this.pair.address);
 
           expect(this.userBalance.add(this.pairBalance).sub(user).sub(pair)).to.be.bignumber.equal(this.expectedBurn);
         });
@@ -479,7 +479,7 @@ describe('UniswapIncentive', function () {
 
       describe('exceeds transfer size', function() {
         it('reverts', async function() {
-          await expectRevert(this.fei.transfer(this.pair.address, 10000000, {from: userAddress}), "UniswapIncentive: Burn exceeds trade size");
+          await expectRevert(this.cowrie.transfer(this.pair.address, 10000000, {from: userAddress}), "UniswapIncentive: Burn exceeds trade size");
         });
       });
     });
@@ -487,7 +487,7 @@ describe('UniswapIncentive', function () {
 
   describe('Above peg', function() {
     beforeEach(async function() {
-      // 490 FEI/ETH = 2% away
+      // 490 COWRIE/ETH = 2% away
       await this.pair.setReserves(100000, 49000000);
     });
 
@@ -498,16 +498,16 @@ describe('UniswapIncentive', function () {
       });
 
       it('user balance updates', async function() {
-        expect(await this.fei.balanceOf(userAddress)).to.be.bignumber.equal(new BN(1000000).add(this.userBalance));
+        expect(await this.cowrie.balanceOf(userAddress)).to.be.bignumber.equal(new BN(1000000).add(this.userBalance));
       });
 
       it('pair balance updates', async function() {
-        expect(await this.fei.balanceOf(this.pair.address)).to.be.bignumber.equal(this.pairBalance.sub(new BN(1000000)));
+        expect(await this.cowrie.balanceOf(this.pair.address)).to.be.bignumber.equal(this.pairBalance.sub(new BN(1000000)));
       });
 
       it('no incentive', async function() {
-        var user = await this.fei.balanceOf(userAddress);
-        var pair = await this.fei.balanceOf(this.pair.address);
+        var user = await this.cowrie.balanceOf(userAddress);
+        var pair = await this.cowrie.balanceOf(this.pair.address);
 
         expect(user.add(pair).sub(this.userBalance).sub(this.pairBalance)).to.be.bignumber.equal(new BN(0));
       });
@@ -517,20 +517,20 @@ describe('UniswapIncentive', function () {
       describe('short of peg', function() {
         beforeEach(async function() {
           // No expected burn
-          await this.fei.transfer(this.pair.address, 100000, {from: userAddress});
+          await this.cowrie.transfer(this.pair.address, 100000, {from: userAddress});
         });
 
         it('user balance updates', async function() {
-          expect(await this.fei.balanceOf(userAddress)).to.be.bignumber.equal(this.userBalance.sub(new BN(100000)));
+          expect(await this.cowrie.balanceOf(userAddress)).to.be.bignumber.equal(this.userBalance.sub(new BN(100000)));
         });
 
         it('pair balance updates', async function() {
-          expect(await this.fei.balanceOf(this.pair.address)).to.be.bignumber.equal(this.pairBalance.add(new BN(100000)));
+          expect(await this.cowrie.balanceOf(this.pair.address)).to.be.bignumber.equal(this.pairBalance.add(new BN(100000)));
         });
 
         it('no incentive', async function() {
-          var user = await this.fei.balanceOf(userAddress);
-          var pair = await this.fei.balanceOf(this.pair.address);
+          var user = await this.cowrie.balanceOf(userAddress);
+          var pair = await this.cowrie.balanceOf(this.pair.address);
 
           expect(this.userBalance.add(this.pairBalance).sub(user).sub(pair)).to.be.bignumber.equal(new BN(0));
         });
@@ -546,20 +546,20 @@ describe('UniswapIncentive', function () {
         beforeEach(async function() {
           // No expected burn
           this.transferAmount = new BN(497445);
-          await this.fei.transfer(this.pair.address, 497445, {from: userAddress});
+          await this.cowrie.transfer(this.pair.address, 497445, {from: userAddress});
         });
 
         it('user balance updates', async function() {
-          expect(await this.fei.balanceOf(userAddress)).to.be.bignumber.equal(this.userBalance.sub(this.transferAmount));
+          expect(await this.cowrie.balanceOf(userAddress)).to.be.bignumber.equal(this.userBalance.sub(this.transferAmount));
         });
 
         it('pair balance updates', async function() {
-          expect(await this.fei.balanceOf(this.pair.address)).to.be.bignumber.equal(this.pairBalance.add(this.transferAmount));
+          expect(await this.cowrie.balanceOf(this.pair.address)).to.be.bignumber.equal(this.pairBalance.add(this.transferAmount));
         });
 
         it('no incentive', async function() {
-          var user = await this.fei.balanceOf(userAddress);
-          var pair = await this.fei.balanceOf(this.pair.address);
+          var user = await this.cowrie.balanceOf(userAddress);
+          var pair = await this.cowrie.balanceOf(this.pair.address);
 
           expect(this.userBalance.add(this.pairBalance).sub(user).sub(pair)).to.be.bignumber.equal(new BN(0));
         });
@@ -576,20 +576,20 @@ describe('UniswapIncentive', function () {
           beforeEach(async function() {
             this.expectedBurn = new BN(6810);
             this.transferAmount = new BN(1000000);
-            await this.fei.transfer(this.pair.address, 1000000, {from: userAddress});
+            await this.cowrie.transfer(this.pair.address, 1000000, {from: userAddress});
           });
 
           it('user balance updates', async function() {
-            expect(await this.fei.balanceOf(userAddress)).to.be.bignumber.equal(this.userBalance.sub(this.transferAmount));
+            expect(await this.cowrie.balanceOf(userAddress)).to.be.bignumber.equal(this.userBalance.sub(this.transferAmount));
           });
 
           it('pair balance updates', async function() {
-            expect(await this.fei.balanceOf(this.pair.address)).to.be.bignumber.equal(this.pairBalance.add(this.transferAmount).sub(this.expectedBurn));
+            expect(await this.cowrie.balanceOf(this.pair.address)).to.be.bignumber.equal(this.pairBalance.add(this.transferAmount).sub(this.expectedBurn));
           });
 
           it('burn incentive', async function() {
-            var user = await this.fei.balanceOf(userAddress);
-            var pair = await this.fei.balanceOf(this.pair.address);
+            var user = await this.cowrie.balanceOf(userAddress);
+            var pair = await this.cowrie.balanceOf(this.pair.address);
 
             expect(this.userBalance.add(this.pairBalance).sub(user).sub(pair)).to.be.bignumber.equal(this.expectedBurn);
           });
@@ -605,20 +605,20 @@ describe('UniswapIncentive', function () {
           beforeEach(async function() {
             this.expectedBurn = new BN(9501030); // burns everything but amount to peg
             this.transferAmount = new BN(10000000);
-            await this.fei.transfer(this.pair.address, 10000000, {from: userAddress});
+            await this.cowrie.transfer(this.pair.address, 10000000, {from: userAddress});
           });
 
           it('user balance updates', async function() {
-            expect(await this.fei.balanceOf(userAddress)).to.be.bignumber.equal(this.userBalance.sub(this.transferAmount));
+            expect(await this.cowrie.balanceOf(userAddress)).to.be.bignumber.equal(this.userBalance.sub(this.transferAmount));
           });
 
           it('pair balance updates', async function() {
-            expect(await this.fei.balanceOf(this.pair.address)).to.be.bignumber.equal(this.pairBalance.add(this.transferAmount).sub(this.expectedBurn));
+            expect(await this.cowrie.balanceOf(this.pair.address)).to.be.bignumber.equal(this.pairBalance.add(this.transferAmount).sub(this.expectedBurn));
           });
 
           it('burn incentive', async function() {
-            var user = await this.fei.balanceOf(userAddress);
-            var pair = await this.fei.balanceOf(this.pair.address);
+            var user = await this.cowrie.balanceOf(userAddress);
+            var pair = await this.cowrie.balanceOf(this.pair.address);
 
             expect(this.userBalance.add(this.pairBalance).sub(user).sub(pair)).to.be.bignumber.equal(this.expectedBurn);
           });
@@ -635,7 +635,7 @@ describe('UniswapIncentive', function () {
 
   describe('Way below peg', function() {
     beforeEach(async function() {
-      // 600 FEI/ETH = 20% away
+      // 600 COWRIE/ETH = 20% away
       await this.pair.setReserves(100000, 60000000);
       let block = await time.latestBlock();
       // Set growth rate to 10 per block, starting at next block (the block preceeding the withdrawal)
@@ -651,16 +651,16 @@ describe('UniswapIncentive', function () {
         });
 
         it('user balance updates', async function() {
-          expect(await this.fei.balanceOf(userAddress)).to.be.bignumber.equal(this.transferAmount.add(this.userBalance).add(this.expectedMint));
+          expect(await this.cowrie.balanceOf(userAddress)).to.be.bignumber.equal(this.transferAmount.add(this.userBalance).add(this.expectedMint));
         });
 
         it('pair balance updates', async function() {
-          expect(await this.fei.balanceOf(this.pair.address)).to.be.bignumber.equal(this.pairBalance.sub(this.transferAmount));
+          expect(await this.cowrie.balanceOf(this.pair.address)).to.be.bignumber.equal(this.pairBalance.sub(this.transferAmount));
         });
 
         it('mint incentive', async function() {
-          var user = await this.fei.balanceOf(userAddress);
-          var pair = await this.fei.balanceOf(this.pair.address);
+          var user = await this.cowrie.balanceOf(userAddress);
+          var pair = await this.cowrie.balanceOf(this.pair.address);
 
           expect(user.add(pair).sub(this.userBalance).sub(this.pairBalance)).to.be.bignumber.equal(this.expectedMint);
         });
@@ -676,7 +676,7 @@ describe('UniswapIncentive', function () {
 
   describe('Below peg', function() {
     beforeEach(async function() {
-      // 510 FEI/ETH = 2% away
+      // 510 COWRIE/ETH = 2% away
       await this.pair.setReserves(100000, 51000000);
       let block = await time.latestBlock();
       // Set growth rate to 1 per block, starting at next block (the block preceeding the withdrawal)
@@ -693,16 +693,16 @@ describe('UniswapIncentive', function () {
         });
 
         it('user balance updates', async function() {
-          expect(await this.fei.balanceOf(userAddress)).to.be.bignumber.equal(this.transferAmount.add(this.userBalance).add(this.expectedMint));
+          expect(await this.cowrie.balanceOf(userAddress)).to.be.bignumber.equal(this.transferAmount.add(this.userBalance).add(this.expectedMint));
         });
 
         it('pair balance updates', async function() {
-          expect(await this.fei.balanceOf(this.pair.address)).to.be.bignumber.equal(this.pairBalance.sub(this.transferAmount));
+          expect(await this.cowrie.balanceOf(this.pair.address)).to.be.bignumber.equal(this.pairBalance.sub(this.transferAmount));
         });
 
         it('no incentive', async function() {
-          var user = await this.fei.balanceOf(userAddress);
-          var pair = await this.fei.balanceOf(this.pair.address);
+          var user = await this.cowrie.balanceOf(userAddress);
+          var pair = await this.cowrie.balanceOf(this.pair.address);
 
           expect(user.add(pair).sub(this.userBalance).sub(this.pairBalance)).to.be.bignumber.equal(this.expectedMint);
         });
@@ -723,16 +723,16 @@ describe('UniswapIncentive', function () {
         });
 
         it('user balance updates', async function() {
-          expect(await this.fei.balanceOf(userAddress)).to.be.bignumber.equal(this.transferAmount.add(this.userBalance).add(this.expectedMint));
+          expect(await this.cowrie.balanceOf(userAddress)).to.be.bignumber.equal(this.transferAmount.add(this.userBalance).add(this.expectedMint));
         });
 
         it('pair balance updates', async function() {
-          expect(await this.fei.balanceOf(this.pair.address)).to.be.bignumber.equal(this.pairBalance.sub(this.transferAmount));
+          expect(await this.cowrie.balanceOf(this.pair.address)).to.be.bignumber.equal(this.pairBalance.sub(this.transferAmount));
         });
 
         it('no incentive', async function() {
-          var user = await this.fei.balanceOf(userAddress);
-          var pair = await this.fei.balanceOf(this.pair.address);
+          var user = await this.cowrie.balanceOf(userAddress);
+          var pair = await this.cowrie.balanceOf(this.pair.address);
 
           expect(user.add(pair).sub(this.userBalance).sub(this.pairBalance)).to.be.bignumber.equal(this.expectedMint);
         });
@@ -752,16 +752,16 @@ describe('UniswapIncentive', function () {
         });
 
         it('user balance updates', async function() {
-          expect(await this.fei.balanceOf(userAddress)).to.be.bignumber.equal(this.transferAmount.add(this.userBalance).add(this.expectedMint));
+          expect(await this.cowrie.balanceOf(userAddress)).to.be.bignumber.equal(this.transferAmount.add(this.userBalance).add(this.expectedMint));
         });
 
         it('pair balance updates', async function() {
-          expect(await this.fei.balanceOf(this.pair.address)).to.be.bignumber.equal(this.pairBalance.sub(this.transferAmount));
+          expect(await this.cowrie.balanceOf(this.pair.address)).to.be.bignumber.equal(this.pairBalance.sub(this.transferAmount));
         });
 
         it('mint incentive', async function() {
-          var user = await this.fei.balanceOf(userAddress);
-          var pair = await this.fei.balanceOf(this.pair.address);
+          var user = await this.cowrie.balanceOf(userAddress);
+          var pair = await this.cowrie.balanceOf(this.pair.address);
 
           expect(user.add(pair).sub(this.userBalance).sub(this.pairBalance)).to.be.bignumber.equal(this.expectedMint);
         });
@@ -781,16 +781,16 @@ describe('UniswapIncentive', function () {
         });
 
         it('user balance updates', async function() {
-          expect(await this.fei.balanceOf(userAddress)).to.be.bignumber.equal(this.transferAmount.add(this.userBalance).add(this.expectedMint));
+          expect(await this.cowrie.balanceOf(userAddress)).to.be.bignumber.equal(this.transferAmount.add(this.userBalance).add(this.expectedMint));
         });
 
         it('pair balance updates', async function() {
-          expect(await this.fei.balanceOf(this.pair.address)).to.be.bignumber.equal(this.pairBalance.sub(this.transferAmount));
+          expect(await this.cowrie.balanceOf(this.pair.address)).to.be.bignumber.equal(this.pairBalance.sub(this.transferAmount));
         });
 
         it('mint incentive', async function() {
-          var user = await this.fei.balanceOf(userAddress);
-          var pair = await this.fei.balanceOf(this.pair.address);
+          var user = await this.cowrie.balanceOf(userAddress);
+          var pair = await this.cowrie.balanceOf(this.pair.address);
 
           expect(user.add(pair).sub(this.userBalance).sub(this.pairBalance)).to.be.bignumber.equal(this.expectedMint);
         });
@@ -810,16 +810,16 @@ describe('UniswapIncentive', function () {
         });
 
         it('user balance updates', async function() {
-          expect(await this.fei.balanceOf(userAddress)).to.be.bignumber.equal(this.transferAmount.add(this.userBalance).add(this.expectedMint));
+          expect(await this.cowrie.balanceOf(userAddress)).to.be.bignumber.equal(this.transferAmount.add(this.userBalance).add(this.expectedMint));
         });
 
         it('pair balance updates', async function() {
-          expect(await this.fei.balanceOf(this.pair.address)).to.be.bignumber.equal(this.pairBalance.sub(this.transferAmount));
+          expect(await this.cowrie.balanceOf(this.pair.address)).to.be.bignumber.equal(this.pairBalance.sub(this.transferAmount));
         });
 
         it('mint incentive', async function() {
-          var user = await this.fei.balanceOf(userAddress);
-          var pair = await this.fei.balanceOf(this.pair.address);
+          var user = await this.cowrie.balanceOf(userAddress);
+          var pair = await this.cowrie.balanceOf(this.pair.address);
 
           expect(user.add(pair).sub(this.userBalance).sub(this.pairBalance)).to.be.bignumber.equal(this.expectedMint);
         });
@@ -840,16 +840,16 @@ describe('UniswapIncentive', function () {
         });
 
         it('user balance updates', async function() {
-          expect(await this.fei.balanceOf(userAddress)).to.be.bignumber.equal(this.transferAmount.add(this.userBalance).add(this.expectedMint));
+          expect(await this.cowrie.balanceOf(userAddress)).to.be.bignumber.equal(this.transferAmount.add(this.userBalance).add(this.expectedMint));
         });
 
         it('pair balance updates', async function() {
-          expect(await this.fei.balanceOf(this.pair.address)).to.be.bignumber.equal(this.pairBalance.sub(this.transferAmount));
+          expect(await this.cowrie.balanceOf(this.pair.address)).to.be.bignumber.equal(this.pairBalance.sub(this.transferAmount));
         });
 
         it('mint incentive', async function() {
-          var user = await this.fei.balanceOf(userAddress);
-          var pair = await this.fei.balanceOf(this.pair.address);
+          var user = await this.cowrie.balanceOf(userAddress);
+          var pair = await this.cowrie.balanceOf(this.pair.address);
 
           expect(user.add(pair).sub(this.userBalance).sub(this.pairBalance)).to.be.bignumber.equal(this.expectedMint);
         });
@@ -870,16 +870,16 @@ describe('UniswapIncentive', function () {
         });
 
         it('user balance updates', async function() {
-          expect(await this.fei.balanceOf(userAddress)).to.be.bignumber.equal(this.transferAmount.add(this.userBalance).add(this.expectedMint));
+          expect(await this.cowrie.balanceOf(userAddress)).to.be.bignumber.equal(this.transferAmount.add(this.userBalance).add(this.expectedMint));
         });
 
         it('pair balance updates', async function() {
-          expect(await this.fei.balanceOf(this.pair.address)).to.be.bignumber.equal(this.pairBalance.sub(this.transferAmount));
+          expect(await this.cowrie.balanceOf(this.pair.address)).to.be.bignumber.equal(this.pairBalance.sub(this.transferAmount));
         });
 
         it('mint incentive', async function() {
-          var user = await this.fei.balanceOf(userAddress);
-          var pair = await this.fei.balanceOf(this.pair.address);
+          var user = await this.cowrie.balanceOf(userAddress);
+          var pair = await this.cowrie.balanceOf(this.pair.address);
 
           expect(user.add(pair).sub(this.userBalance).sub(this.pairBalance)).to.be.bignumber.equal(this.expectedMint);
         });
@@ -902,16 +902,16 @@ describe('UniswapIncentive', function () {
         });
 
         it('user balance updates', async function() {
-          expect(await this.fei.balanceOf(userAddress)).to.be.bignumber.equal(this.transferAmount.add(this.userBalance).add(this.expectedMint));
+          expect(await this.cowrie.balanceOf(userAddress)).to.be.bignumber.equal(this.transferAmount.add(this.userBalance).add(this.expectedMint));
         });
 
         it('pair balance updates', async function() {
-          expect(await this.fei.balanceOf(this.pair.address)).to.be.bignumber.equal(this.pairBalance.sub(this.transferAmount));
+          expect(await this.cowrie.balanceOf(this.pair.address)).to.be.bignumber.equal(this.pairBalance.sub(this.transferAmount));
         });
 
         it('mint incentive', async function() {
-          var user = await this.fei.balanceOf(userAddress);
-          var pair = await this.fei.balanceOf(this.pair.address);
+          var user = await this.cowrie.balanceOf(userAddress);
+          var pair = await this.cowrie.balanceOf(this.pair.address);
 
           expect(user.add(pair).sub(this.userBalance).sub(this.pairBalance)).to.be.bignumber.equal(this.expectedMint);
         });
@@ -930,20 +930,20 @@ describe('UniswapIncentive', function () {
           await this.core.revokeBurner(this.incentive.address, {from: governorAddress});
           this.expectedBurn = new BN(0);
           this.transferAmount = new BN(1000000);
-          await this.fei.transfer(this.pair.address, 1000000, {from: userAddress});
+          await this.cowrie.transfer(this.pair.address, 1000000, {from: userAddress});
         });
 
         it('user balance updates', async function() {
-          expect(await this.fei.balanceOf(userAddress)).to.be.bignumber.equal(this.userBalance.sub(this.transferAmount).sub(this.expectedBurn));
+          expect(await this.cowrie.balanceOf(userAddress)).to.be.bignumber.equal(this.userBalance.sub(this.transferAmount).sub(this.expectedBurn));
         });
 
         it('pair balance updates', async function() {
-          expect(await this.fei.balanceOf(this.pair.address)).to.be.bignumber.equal(this.pairBalance.add(this.transferAmount));
+          expect(await this.cowrie.balanceOf(this.pair.address)).to.be.bignumber.equal(this.pairBalance.add(this.transferAmount));
         });
 
         it('burn incentive', async function() {
-          var user = await this.fei.balanceOf(userAddress);
-          var pair = await this.fei.balanceOf(this.pair.address);
+          var user = await this.cowrie.balanceOf(userAddress);
+          var pair = await this.cowrie.balanceOf(this.pair.address);
 
           expect(this.userBalance.add(this.pairBalance).sub(user).sub(pair)).to.be.bignumber.equal(this.expectedBurn);
         });
@@ -960,20 +960,20 @@ describe('UniswapIncentive', function () {
           await this.incentive.setExemptAddress(userAddress, true, {from: governorAddress});
           this.expectedBurn = new BN(0);
           this.transferAmount = new BN(1000000);
-          await this.fei.transfer(this.pair.address, 1000000, {from: userAddress});
+          await this.cowrie.transfer(this.pair.address, 1000000, {from: userAddress});
         });
 
         it('user balance updates', async function() {
-          expect(await this.fei.balanceOf(userAddress)).to.be.bignumber.equal(this.userBalance.sub(this.transferAmount).sub(this.expectedBurn));
+          expect(await this.cowrie.balanceOf(userAddress)).to.be.bignumber.equal(this.userBalance.sub(this.transferAmount).sub(this.expectedBurn));
         });
 
         it('pair balance updates', async function() {
-          expect(await this.fei.balanceOf(this.pair.address)).to.be.bignumber.equal(this.pairBalance.add(this.transferAmount));
+          expect(await this.cowrie.balanceOf(this.pair.address)).to.be.bignumber.equal(this.pairBalance.add(this.transferAmount));
         });
 
         it('burn incentive', async function() {
-          var user = await this.fei.balanceOf(userAddress);
-          var pair = await this.fei.balanceOf(this.pair.address);
+          var user = await this.cowrie.balanceOf(userAddress);
+          var pair = await this.cowrie.balanceOf(this.pair.address);
 
           expect(this.userBalance.add(this.pairBalance).sub(user).sub(pair)).to.be.bignumber.equal(this.expectedBurn);
         });
@@ -989,20 +989,20 @@ describe('UniswapIncentive', function () {
         beforeEach(async function() {
           this.expectedBurn = new BN(172878);
           this.transferAmount = new BN(1000000);
-          await this.fei.transfer(this.pair.address, 1000000, {from: userAddress});
+          await this.cowrie.transfer(this.pair.address, 1000000, {from: userAddress});
         });
 
         it('user balance updates', async function() {
-          expect(await this.fei.balanceOf(userAddress)).to.be.bignumber.equal(this.userBalance.sub(this.transferAmount));
+          expect(await this.cowrie.balanceOf(userAddress)).to.be.bignumber.equal(this.userBalance.sub(this.transferAmount));
         });
 
         it('pair balance updates', async function() {
-          expect(await this.fei.balanceOf(this.pair.address)).to.be.bignumber.equal(this.pairBalance.add(this.transferAmount).sub(this.expectedBurn));
+          expect(await this.cowrie.balanceOf(this.pair.address)).to.be.bignumber.equal(this.pairBalance.add(this.transferAmount).sub(this.expectedBurn));
         });
 
         it('burn incentive', async function() {
-          var user = await this.fei.balanceOf(userAddress);
-          var pair = await this.fei.balanceOf(this.pair.address);
+          var user = await this.cowrie.balanceOf(userAddress);
+          var pair = await this.cowrie.balanceOf(this.pair.address);
 
           expect(this.userBalance.add(this.pairBalance).sub(user).sub(pair)).to.be.bignumber.equal(this.expectedBurn);
         });
@@ -1022,20 +1022,20 @@ describe('UniswapIncentive', function () {
             await time.advanceBlock();
           }
 
-          await this.fei.transfer(this.pair.address, 100000, {from: userAddress});
+          await this.cowrie.transfer(this.pair.address, 100000, {from: userAddress});
         });
 
         it('user balance updates', async function() {
-          expect(await this.fei.balanceOf(userAddress)).to.be.bignumber.equal(this.userBalance.sub(this.transferAmount));
+          expect(await this.cowrie.balanceOf(userAddress)).to.be.bignumber.equal(this.userBalance.sub(this.transferAmount));
         });
 
         it('pair balance updates', async function() {
-          expect(await this.fei.balanceOf(this.pair.address)).to.be.bignumber.equal(this.pairBalance.add(this.transferAmount).sub(this.expectedBurn));
+          expect(await this.cowrie.balanceOf(this.pair.address)).to.be.bignumber.equal(this.pairBalance.add(this.transferAmount).sub(this.expectedBurn));
         });
 
         it('burn incentive', async function() {
-          var user = await this.fei.balanceOf(userAddress);
-          var pair = await this.fei.balanceOf(this.pair.address);
+          var user = await this.cowrie.balanceOf(userAddress);
+          var pair = await this.cowrie.balanceOf(this.pair.address);
 
           expect(this.userBalance.add(this.pairBalance).sub(user).sub(pair)).to.be.bignumber.equal(this.expectedBurn);
         });
@@ -1049,7 +1049,7 @@ describe('UniswapIncentive', function () {
 
       describe('burn exceeds trade', function() {
         it('reverts', async function() {
-          await expectRevert(this.fei.transfer(this.pair.address, 10000000, {from: userAddress}), "UniswapIncentive: Burn exceeds trade size");
+          await expectRevert(this.cowrie.transfer(this.pair.address, 10000000, {from: userAddress}), "UniswapIncentive: Burn exceeds trade size");
         });
       });
     });
@@ -1057,8 +1057,8 @@ describe('UniswapIncentive', function () {
 
   describe('Access', function () {
     describe('Incentivize', function() {
-      it('Non-Fei call reverts', async function() {
-        await expectRevert(this.incentive.incentivize(this.pair.address, userAddress, userAddress, 1000000), "CoreRef: Caller is not FEI");
+      it('Non-Cowrie call reverts', async function() {
+        await expectRevert(this.incentive.incentivize(this.pair.address, userAddress, userAddress, 1000000), "CoreRef: Caller is not COWRIE");
       });
     });
 

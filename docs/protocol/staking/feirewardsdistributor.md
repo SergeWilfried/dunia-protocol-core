@@ -2,17 +2,17 @@
 description: The escrow contract responsible for dripping TRIBE into the staking rewards
 ---
 
-# FeiRewardsDistributor
+# DuniaRewardsDistributor
 
 ## Contract
 
-[FeiRewardsDistributor.sol](https://github.com/fei-protocol/fei-protocol-core/blob/master/contracts/staking/FeiRewardsDistributor.sol) implements [IRewardsDistributor](https://github.com/fei-protocol/fei-protocol-core/blob/master/contracts/staking/IRewardsDistributor.sol), [CoreRef](https://github.com/fei-protocol/fei-protocol-core/blob/master/contracts/refs/CoreRef.sol), [Timed](https://github.com/fei-protocol/fei-protocol-core/blob/master/contracts/utils/Timed.sol)
+[DuniaRewardsDistributor.sol](https://github.com/cowrie-protocol/cowrie-protocol-core/blob/master/contracts/staking/DuniaRewardsDistributor.sol) implements [IRewardsDistributor](https://github.com/cowrie-protocol/cowrie-protocol-core/blob/master/contracts/staking/IRewardsDistributor.sol), [CoreRef](https://github.com/cowrie-protocol/cowrie-protocol-core/blob/master/contracts/refs/CoreRef.sol), [Timed](https://github.com/cowrie-protocol/cowrie-protocol-core/blob/master/contracts/utils/Timed.sol)
 
 ## Description
 
-The FeiRewardsDistributor contract is responsible for sending rewards to the FeiStakingRewards contract each week. 
+The DuniaRewardsDistributor contract is responsible for sending rewards to the DuniaStakingRewards contract each week. 
 
-It has one public method exposed for keepers to execute this drip functionality, which rewards the caller with a fixed amount of [FEI](../fei-stablecoin/).
+It has one public method exposed for keepers to execute this drip functionality, which rewards the caller with a fixed amount of [COWRIE](../cowrie-stablecoin/).
 
 {% page-ref page="feistakingrewards.md" %}
 
@@ -32,7 +32,7 @@ Set the "unreleased function" _U\(t\)_ equal to the area under this curve betwee
 
 {% tabs %}
 {% tab title="Drip" %}
- Sent TRIBE to the FeiStakingRewards contract
+ Sent TRIBE to the DuniaStakingRewards contract
 
 | type | param | description |
 | :--- | :--- | :--- |
@@ -57,7 +57,7 @@ Change the drip frequency
 {% endtab %}
 
 {% tab title="IncentiveUpdate" %}
-Change in the FEI reward for dripping
+Change in the COWRIE reward for dripping
 
 | type | param | description |
 | :--- | :--- | :--- |
@@ -81,7 +81,7 @@ A change in the staking contract to send TRIBE to.
 function incentiveAmount() external view returns (uint256);
 ```
 
-Returns the amount of FEI sent to the caller of `drip()`.
+Returns the amount of COWRIE sent to the caller of `drip()`.
 
 ### dripFrequency
 
@@ -121,7 +121,7 @@ The last block timestamp when rewards were distributed from the contract.
 function stakingContract() external view returns (IStakingRewards);
 ```
 
-The [FeiStakingRewards](feistakingrewards.md) contract address
+The [DuniaStakingRewards](feistakingrewards.md) contract address
 
 ### totalReward
 
@@ -153,7 +153,7 @@ The unreleased reward function following the formula shown in the Release Schedu
 function rewardBalance() external view returns (uint256);
 ```
 
-The amount of [TRIBE](../../governance/tribe.md) held by the contract, released or unreleased.
+The amount of [TRIBE](../../governance/dunia.md) held by the contract, released or unreleased.
 
 ### distributedRewards
 
@@ -161,7 +161,7 @@ The amount of [TRIBE](../../governance/tribe.md) held by the contract, released 
 function distributedRewards() external view returns (uint256);
 ```
 
-The total amount of [TRIBE](../../governance/tribe.md) already distributed to [FeiStakingRewards](feistakingrewards.md).
+The total amount of [TRIBE](../../governance/dunia.md) already distributed to [DuniaStakingRewards](feistakingrewards.md).
 
 ## EOA-Only 👤 State-Changing Functions
 
@@ -171,12 +171,12 @@ The total amount of [TRIBE](../../governance/tribe.md) already distributed to [F
 function drip() external returns (uint256);
 ```
 
-Sends `releasedReward()` [TRIBE](../../governance/tribe.md) to the `stakingRewards()` contract and updates the reward rate.
+Sends `releasedReward()` [TRIBE](../../governance/dunia.md) to the `stakingRewards()` contract and updates the reward rate.
 
-Incentivizes the caller with `incentiveAmount()` [FEI](../fei-stablecoin/fei-fei-usd.md).
+Incentivizes the caller with `incentiveAmount()` [COWRIE](../cowrie-stablecoin/cowrie-cowrie-usd.md).
 
 {% hint style="info" %}
-Only callable when `nextDripAvailable()` is below the current block timestamp and the contract is not [paused](../../governance/fei-guardian.md)
+Only callable when `nextDripAvailable()` is below the current block timestamp and the contract is not [paused](../../governance/cowrie-guardian.md)
 {% endhint %}
 
 ## Governor-Only⚖️ State-Changing Functions
@@ -187,7 +187,7 @@ Only callable when `nextDripAvailable()` is below the current block timestamp an
 function governorWithdraw(uint256 amount) external;
 ```
 
-Withdraws `amount` TRIBE tokens from the pool to [Fei Core.](../access-control/core.md)
+Withdraws `amount` TRIBE tokens from the pool to [Cowrie Core.](../access-control/core.md)
 
 ### governorRecover
 
@@ -195,7 +195,7 @@ Withdraws `amount` TRIBE tokens from the pool to [Fei Core.](../access-control/c
 function governorRecover(address tokenAddress, address to, uint256 amount) external;
 ```
 
-Recovers `tokenAddress` ERC20 tokens from the FeiStakingRewards contract to address `to`. This is used if there were AMM rewards distributed.
+Recovers `tokenAddress` ERC20 tokens from the DuniaStakingRewards contract to address `to`. This is used if there were AMM rewards distributed.
 
 ### setDripFrequency
 
@@ -203,7 +203,7 @@ Recovers `tokenAddress` ERC20 tokens from the FeiStakingRewards contract to addr
 function setDripFrequency(uint256 _frequency) external;
 ```
 
-Sets the frequency with which the contract calls the FeiStakingRewards.
+Sets the frequency with which the contract calls the DuniaStakingRewards.
 
 ### setIncentiveAmount
 
@@ -223,7 +223,7 @@ Sets the staking contract to send TRIBE to.
 
 ## ABIs
 
-{% file src="../../.gitbook/assets/feirewardsdistributor.json" caption="FeiRewardsDistributor ABI" %}
+{% file src="../../.gitbook/assets/feirewardsdistributor.json" caption="DuniaRewardsDistributor ABI" %}
 
 {% file src="../../.gitbook/assets/irewardsdistributor.json" caption="RewardsDistributor Interface ABI" %}
 

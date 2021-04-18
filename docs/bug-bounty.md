@@ -8,13 +8,13 @@ description: Community engagement incentives
 
 **Program overview**
 
-Fei Protocol's goal is to maintain a liquid market in which ETH/FEI trades closely to the ETH/USD price. FEI achieves this via a new stability mechanism known as direct incentives. Direct incentive stable coins use dynamic mint rewards and burn penalties on DEX trade volume to maintain the peg. Governance can add and update DEX integrations and other incentives as needed, which uses the TRIBE governance token.
+Cowrie Protocol's goal is to maintain a liquid market in which ETH/COWRIE trades closely to the ETH/USD price. COWRIE achieves this via a new stability mechanism known as direct incentives. Direct incentive stable coins use dynamic mint rewards and burn penalties on DEX trade volume to maintain the peg. Governance can add and update DEX integrations and other incentives as needed, which uses the TRIBE governance token.
 
 The bug bounty program is focused on its smart contracts and website and the prevention of the loss of user funds and the disruption of the governance system.
 
-## All bug submissions must go through Immunefi's bug submission process on the [Fei bug bounty page](https://immunefi.com/bounty/feiprotocol).
+## All bug submissions must go through Immunefi's bug submission process on the [Cowrie bug bounty page](https://immunefi.com/bounty/feiprotocol).
 
-The Fei bug bounty page can be viewed at [https://immunefi.com/bounty/feiprotocol](https://immunefi.com/bounty/feiprotocol). When a hacker hits the "Submit bug report" button, they will be sent to [bugs.immunefi.com](https://bugs.immunefi.com/) which will guide them through the process of creating a bug report.
+The Cowrie bug bounty page can be viewed at [https://immunefi.com/bounty/feiprotocol](https://immunefi.com/bounty/feiprotocol). When a hacker hits the "Submit bug report" button, they will be sent to [bugs.immunefi.com](https://bugs.immunefi.com/) which will guide them through the process of creating a bug report.
 
 **Rewards by threat level**
 
@@ -40,7 +40,7 @@ Medium **USD 1 000**
 
 Low **USD 200**
 
-Payouts are handled by the **Fei Protocol** team directly and are denominated in USD. However, payouts are done in **TRIBE or FEI**.
+Payouts are handled by the **Cowrie Protocol** team directly and are denominated in USD. However, payouts are done in **TRIBE or COWRIE**.
 
 \*Critical-level smart contract vulnerabilities that result in the loss of user funds will have rewards additionally capped at 10% of the funds potentially affected based on the vulnerability that was identified. These rewards are additionally only payable in **TRIBE** and have a vesting schedule lasting between 6-12 months with a minimum of 6 months for rewards up to USD 400 000, with an additional month added for every USD 100,000 tranche, rounded up.
 

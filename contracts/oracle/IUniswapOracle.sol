@@ -5,7 +5,7 @@ import "@uniswap/v2-core/contracts/interfaces/IUniswapV2Pair.sol";
 import "./IOracle.sol";
 
 /// @title Uniswap oracle interface
-/// @author Fei Protocol
+/// @author Cowrie Protocol
 interface IUniswapOracle is IOracle {
     // ----------- Events -----------
     event DurationUpdate(uint256 _duration);

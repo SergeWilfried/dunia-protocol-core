@@ -4,7 +4,7 @@ pragma experimental ABIEncoderV2;
 import "@openzeppelin/contracts/utils/SafeCast.sol";
 
 /// @title an abstract contract for timed events
-/// @author Fei Protocol
+/// @author Cowrie Protocol
 abstract contract Timed {
     using SafeCast for uint256;
 
